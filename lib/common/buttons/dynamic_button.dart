@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:gibili/common/buttons/scale_button.dart';
+import 'package:jal_seva/common/buttons/scale_button.dart';
+
 
 class DynamicButton extends StatefulWidget {
   const DynamicButton(

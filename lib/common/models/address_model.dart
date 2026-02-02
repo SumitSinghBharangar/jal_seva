@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:gibili/common/constants/app_collections.dart';
-import 'package:geoflutterfire2/geoflutterfire2.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-final geo = GeoFlutterFire();
+
 
 class AddressModel {
   String id;
