@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geoflutterfire2/geoflutterfire2.dart';
 
-
+final geo = GeoFlutterFire();
 
 class AddressModel {
   String id;
@@ -52,8 +53,9 @@ class AddressModel {
       'appartment': appartment,
       'landmark': landmark,
       'geo': GeoPoint(lat.toDouble(), lng.toDouble()),
-      'point':
-          geo.point(latitude: lat.toDouble(), longitude: lng.toDouble()).data,
+      'point': geo
+          .point(latitude: lat.toDouble(), longitude: lng.toDouble())
+          .data,
       'pipeImage': pipeImage,
     };
   }
