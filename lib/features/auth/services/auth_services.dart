@@ -1,12 +1,12 @@
 import 'dart:developer';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:gibili/common/constants/app_collections.dart';
-import 'package:gibili/common/models/user_model.dart';
+import 'package:jal_seva/common/constants/app_collections.dart';
+
+import 'package:jal_seva/common/models/user_model.dart';
 
 class AuthServices extends ChangeNotifier {
   bool isLoading = false;
@@ -17,9 +17,10 @@ class AuthServices extends ChangeNotifier {
   // UserModel? user;
   String? primaryAdress;
 
-  Future<void> sendOtp(
-      {required String phone,
-      required void Function(bool success) onSend}) async {
+  Future<void> sendOtp({
+    required String phone,
+    required void Function(bool success) onSend,
+  }) async {
     isLoading = true;
     notifyListeners();
 
@@ -87,17 +88,16 @@ class AuthServices extends ChangeNotifier {
         return false;
       }
       if (e.code == 'session-expired') {
-        Fluttertoast.showToast(
-          msg: "Session expired..",
-        );
+        Fluttertoast.showToast(msg: "Session expired..");
         return false;
       }
 
       isLoading = false;
       Fluttertoast.showToast(
-          msg: e.code == 'invalid-verification-code'
-              ? "Incorrect OTP"
-              : e.message ?? e.code);
+        msg: e.code == 'invalid-verification-code'
+            ? "Incorrect OTP"
+            : e.message ?? e.code,
+      );
 
       notifyListeners();
     } catch (e) {
@@ -121,32 +121,34 @@ class AuthServices extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    var u = FirebaseAuth.instance.currentUser!;
+    // var u = FirebaseAuth.instance.currentUser!;
 
-    var data = await users.doc(u.uid).get();
+    // var data = await users.doc(u.uid).get();
 
-    String? token = await FirebaseMessaging.instance.getToken();
+    // String? token = await FirebaseMessaging.instance.getToken();
 
-    if (data.exists) {
-      primaryAdress = (data.data()!)['primaryAdress'] as String?;
+    // if (data.exists) {
+    //   primaryAdress = (data.data()!)['primaryAdress'] as String?;
 
-      await users.doc(u.uid).update({
-        'tokens': FieldValue.arrayUnion([token])
-      });
+    //   await users.doc(u.uid).update({
+    //     'tokens': FieldValue.arrayUnion([token]),
+    //   });
 
-      notifyListeners();
-    } else {
-      await users.doc(u.uid).set({
-        'uid': u.uid,
-        'phone': u.phoneNumber,
-        'primaryAdress': null,
-        'createdAt':
-            Timestamp.fromDate(u.metadata.creationTime ?? DateTime.now()),
-        'lastSignIn':
-            Timestamp.fromDate(u.metadata.lastSignInTime ?? DateTime.now()),
-        'tokens': [token],
-      });
-    }
+    //   notifyListeners();
+    // } else {
+    //   await users.doc(u.uid).set({
+    //     'uid': u.uid,
+    //     'phone': u.phoneNumber,
+    //     'primaryAdress': null,
+    //     'createdAt': Timestamp.fromDate(
+    //       u.metadata.creationTime ?? DateTime.now(),
+    //     ),
+    //     'lastSignIn': Timestamp.fromDate(
+    //       u.metadata.lastSignInTime ?? DateTime.now(),
+    //     ),
+    //     'tokens': [token],
+    //   });
+    // }
 
     // if (u.displayName == null) {
     //   try {
@@ -231,13 +233,16 @@ class AuthServices extends ChangeNotifier {
 
     if (permission == LocationPermission.deniedForever) {
       Fluttertoast.showToast(
-          msg:
-              'Location permissions are permanently denied, we cannot request permissions.');
+        msg:
+            'Location permissions are permanently denied, we cannot request permissions.',
+      );
     }
     final location = await Geolocator.getCurrentPosition();
     position = location;
-    List<Placemark> placemarks =
-        await placemarkFromCoordinates(location.latitude, location.longitude);
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      location.latitude,
+      location.longitude,
+    );
 
     var f = placemarks.first;
     return (f.street ?? "") + (f.country ?? "");

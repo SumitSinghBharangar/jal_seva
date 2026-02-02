@@ -19,6 +19,8 @@ import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jal_seva/common/app_colors.dart';
+import 'package:jal_seva/common/buttons/scale_button.dart';
 import 'package:provider/provider.dart';
 import 'package:string_validator/string_validator.dart';
 
@@ -32,7 +34,8 @@ class ProfileCompleteScreen extends StatefulWidget {
 class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
   final TextEditingController _name = TextEditingController();
   final TextEditingController _phone = TextEditingController(
-      text: FirebaseAuth.instance.currentUser?.phoneNumber.toString() ?? "");
+    text: FirebaseAuth.instance.currentUser?.phoneNumber.toString() ?? "",
+  );
   final TextEditingController _mail = TextEditingController();
   final TextEditingController _userAddress = TextEditingController();
   String? imageUrl;
@@ -62,10 +65,6 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var l = AppLocalizations.of(context);
-    if (l == null) {
-      return const SizedBox();
-    }
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -77,7 +76,7 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
             children: [
               SizedBox(height: MediaQuery.paddingOf(context).top + 30),
               Text(
-                l.introduceYourself,
+                "Introduce Yourself",
                 style: TextStyle(
                   fontSize: 22.sp,
                   fontWeight: FontWeight.bold,
@@ -85,21 +84,16 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
                 ),
               ),
               Text(
-                l.fillUptheCredentials,
-                style: TextStyle(
-                  fontSize: 17.sp,
-                  color: Colors.black,
-                ),
+                "Fill up the following details and let us know you in depth",
+                style: TextStyle(fontSize: 17.sp, color: Colors.black),
               ),
-              SizedBox(
-                height: 30.h,
-              ),
+              SizedBox(height: 30.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    l.addprofilePicture,
+                    "Add Profile Picture",
                     style: TextStyle(
                       fontSize: 17.sp,
                       fontWeight: FontWeight.bold,
@@ -122,24 +116,20 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
                             color: AppColors.buttonColor,
                             size: 23.h,
                           ),
-                          SizedBox(
-                            width: 7.w,
-                          ),
+                          SizedBox(width: 7.w),
                           Text(
-                            l.upload,
+                            "Upload",
                             style: TextStyle(
                               fontSize: 17.sp,
                               color: AppColors.buttonColor,
                             ),
-                          )
+                          ),
                         ],
                       ),
-                    )
+                    ),
                 ],
               ),
-              SizedBox(
-                height: 20.h,
-              ),
+              SizedBox(height: 20.h),
               if (pickedImage != null)
                 ClipRRect(
                   borderRadius: BorderRadius.circular(50),
@@ -153,12 +143,7 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
                     child: Stack(
                       children: [
                         if (imageUrl == null && pickedImage == null)
-                          const Center(
-                            child: Icon(
-                              Iconsax.image,
-                              size: 40,
-                            ),
-                          ),
+                          const Center(child: Icon(Iconsax.image, size: 40)),
                         if (pickedImage != null && imageUrl == null)
                           Positioned.fill(child: Image.file(pickedImage!)),
                         if (imageUrl != null)
@@ -167,16 +152,17 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
                               imageUrl!,
                               loadingBuilder:
                                   (context, child, loadingProgress) {
-                                if (loadingProgress?.cumulativeBytesLoaded ==
-                                    null) {
-                                  return child;
-                                }
-                                return const SpinKitWaveSpinner(
-                                  waveColor: Colors.black,
-                                  size: 80,
-                                  color: Colors.black,
-                                );
-                              },
+                                    if (loadingProgress
+                                            ?.cumulativeBytesLoaded ==
+                                        null) {
+                                      return child;
+                                    }
+                                    return const SpinKitWaveSpinner(
+                                      waveColor: Colors.black,
+                                      size: 80,
+                                      color: Colors.black,
+                                    );
+                                  },
                             ),
                           ),
                         if (imageUploading)
@@ -187,9 +173,7 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
                             ),
                           ),
                         if (imageUploading)
-                          Container(
-                            color: Colors.white.withOpacity(.3),
-                          ),
+                          Container(color: Colors.white.withOpacity(.3)),
                         if (imageUploading)
                           const Align(
                             alignment: Alignment.center,
@@ -219,8 +203,10 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
                   return null;
                 },
                 decoration: InputDecoration(
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 14.h, horizontal: 14.w),
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 14.h,
+                    horizontal: 14.w,
+                  ),
                   hintText: "Name",
                 ),
               ),
@@ -240,54 +226,56 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
                   return null;
                 },
                 decoration: InputDecoration(
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 14.h, horizontal: 14.w),
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 14.h,
+                    horizontal: 14.w,
+                  ),
                   hintText: l.emailAddress,
                 ),
               ),
-              SizedBox(
-                height: 16.h,
-              ),
+              SizedBox(height: 16.h),
               TextFormField(
                 controller: _phone,
                 onTapOutside: (event) {
                   FocusScope.of(context).unfocus();
                 },
                 decoration: InputDecoration(
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 14.h, horizontal: 14.h),
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 14.h,
+                    horizontal: 14.h,
+                  ),
                   hintText: l.phoneNumber,
                 ),
               ),
               const Spacer(),
               const Spacer(),
               DynamicButton(
-                  onPressed: _fKey.currentState?.validate() ?? false
-                      ? () async {
-                          if (imageUrl == null) {
-                            Fluttertoast.showToast(
-                                msg: l.pleaseSelectPrfilePicture);
-                          } else {
-                            showLoading(context);
-                            await _updateProfile();
-                            if (context.mounted) {
-                              context.pop();
-                              context.go(Routes.home.path);
-                            }
+                onPressed: _fKey.currentState?.validate() ?? false
+                    ? () async {
+                        if (imageUrl == null) {
+                          Fluttertoast.showToast(
+                            msg: l.pleaseSelectPrfilePicture,
+                          );
+                        } else {
+                          showLoading(context);
+                          await _updateProfile();
+                          if (context.mounted) {
+                            context.pop();
+                            context.go(Routes.home.path);
                           }
                         }
-                      : null,
-                  child: Text(
-                    l.contnue,
-                    style: TextStyle(
-                      fontSize: 17.h,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )),
-              SizedBox(
-                height: 20.h,
-              )
+                      }
+                    : null,
+                child: Text(
+                  l.contnue,
+                  style: TextStyle(
+                    fontSize: 17.h,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              SizedBox(height: 20.h),
             ],
           ),
         ),
@@ -298,16 +286,18 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
   Future<void> _updateProfile() async {
     if (imageUploading) {
       Fluttertoast.showToast(
-          msg: AppLocalizations.of(context)!.pleaseWaitWhileImageUploading);
+        msg: AppLocalizations.of(context)!.pleaseWaitWhileImageUploading,
+      );
       return;
     }
 
     if (_fKey.currentState?.validate() ?? false) {
       await Provider.of<AuthServices>(context, listen: false).updateProfile(
-          name: _name.text,
-          phone: _phone.text,
-          mail: _mail.text,
-          imageUrl: imageUrl!);
+        name: _name.text,
+        phone: _phone.text,
+        mail: _mail.text,
+        imageUrl: imageUrl!,
+      );
 
       if (mounted) {
         context.go(Routes.home.path);
