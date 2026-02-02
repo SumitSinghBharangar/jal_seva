@@ -2,25 +2,23 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:gibili/common/app_colors.dart';
-import 'package:gibili/common/buttons/dynamic_button.dart';
 
-import 'package:gibili/common/buttons/scale_button.dart';
-import 'package:gibili/common/constants/app_collections.dart';
-import 'package:gibili/common/utils.dart';
-import 'package:gibili/features/auth/services/auth_services.dart';
-import 'package:gibili/routing/routes.dart';
+
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:jal_seva/common/app_colors.dart';
+import 'package:jal_seva/common/buttons/dynamic_button.dart';
 import 'package:jal_seva/common/buttons/scale_button.dart';
+import 'package:jal_seva/features/auth/services/auth_services.dart';
+import 'package:jal_seva/routing/routes.dart';
+import 'package:jal_seva/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:string_validator/string_validator.dart';
 
@@ -105,7 +103,7 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
                     ScaleButton(
                       scale: 0.97,
                       onTap: () async {
-                        await _pickNUpload();
+                        // await _pickNUpload();
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -195,10 +193,10 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return l.thisFieldIsRequired;
+                    return "This field is required";
                   }
                   if (value.length < 3) {
-                    return l.mustHaveChars;
+                    return "Must Have 3 Chars";
                   }
                   return null;
                 },
@@ -221,7 +219,7 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
                     return "This field is required";
                   }
                   if (!value.isEmail) {
-                    return l.invalidMail;
+                    return "Invalid Mail";
                   }
                   return null;
                 },
@@ -230,7 +228,7 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
                     vertical: 14.h,
                     horizontal: 14.w,
                   ),
-                  hintText: l.emailAddress,
+                  hintText: "Email Address",
                 ),
               ),
               SizedBox(height: 16.h),
@@ -244,7 +242,7 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
                     vertical: 14.h,
                     horizontal: 14.h,
                   ),
-                  hintText: l.phoneNumber,
+                  hintText: "Enter Phone Number",
                 ),
               ),
               const Spacer(),
@@ -254,7 +252,7 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
                     ? () async {
                         if (imageUrl == null) {
                           Fluttertoast.showToast(
-                            msg: l.pleaseSelectPrfilePicture,
+                            msg: "Please select a profile picture",
                           );
                         } else {
                           showLoading(context);
@@ -267,7 +265,7 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
                       }
                     : null,
                 child: Text(
-                  l.contnue,
+                  "Continue",
                   style: TextStyle(
                     fontSize: 17.h,
                     color: Colors.white,
@@ -286,7 +284,7 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
   Future<void> _updateProfile() async {
     if (imageUploading) {
       Fluttertoast.showToast(
-        msg: AppLocalizations.of(context)!.pleaseWaitWhileImageUploading,
+        msg: "Please wait while image is uploading",
       );
       return;
     }
@@ -305,35 +303,35 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
     }
   }
 
-  Future<void> _pickNUpload() async {
-    var r = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (r != null) {
-      imageUrl = null;
-      pickedImage = File(r.path);
-      imageUploading = true;
-      setState(() {
-        var u = FirebaseAuth.instance.currentUser?.uid;
-        var ref = FirebaseStorage.instance.ref(u);
-        ref = ref.child('profilePicture');
-        ref.putData(pickedImage!.readAsBytesSync()).whenComplete(() async {
-          String url = await ref.getDownloadURL();
-          imageUrl = url;
-          await FirebaseAuth.instance.currentUser?.updatePhotoURL(url);
-          await FirebaseAuth.instance.currentUser?.reload();
-          imageUploading = false;
-          setState(() {});
-        });
-      });
-      // var c = await ImageCropper().cropImage(
-      //     sourcePath: r.path,
-      //     aspectRatio: const CropAspectRatio(ratioX: 2, ratioY: 2));
-      // if (c != null) {
-      //   imageUrl = null;
-      //   pickedImage = File(c.path);
-      //   imageUploading = true;
-      //   setState(() {});
+  // Future<void> _pickNUpload() async {
+  //   var r = await ImagePicker().pickImage(source: ImageSource.gallery);
+  //   if (r != null) {
+  //     imageUrl = null;
+  //     pickedImage = File(r.path);
+  //     imageUploading = true;
+  //     setState(() {
+  //       var u = FirebaseAuth.instance.currentUser?.uid;
+  //       var ref = FirebaseStorage.instance.ref(u);
+  //       ref = ref.child('profilePicture');
+  //       ref.putData(pickedImage!.readAsBytesSync()).whenComplete(() async {
+  //         String url = await ref.getDownloadURL();
+  //         imageUrl = url;
+  //         await FirebaseAuth.instance.currentUser?.updatePhotoURL(url);
+  //         await FirebaseAuth.instance.currentUser?.reload();
+  //         imageUploading = false;
+  //         setState(() {});
+  //       });
+  //     });
+  //     // var c = await ImageCropper().cropImage(
+  //     //     sourcePath: r.path,
+  //     //     aspectRatio: const CropAspectRatio(ratioX: 2, ratioY: 2));
+  //     // if (c != null) {
+  //     //   imageUrl = null;
+  //     //   pickedImage = File(c.path);
+  //     //   imageUploading = true;
+  //     //   setState(() {});
 
-      // }
-    }
-  }
+  //     // }
+  //   }
+  // }
 }

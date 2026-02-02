@@ -1,16 +1,14 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:gibili/common/app_colors.dart';
-import 'package:gibili/common/buttons/dynamic_button.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:gibili/features/auth/services/auth_services.dart';
 
-import 'package:gibili/routing/routes.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jal_seva/common/app_colors.dart';
+import 'package:jal_seva/common/buttons/dynamic_button.dart';
+import 'package:jal_seva/features/auth/services/auth_services.dart';
+import 'package:jal_seva/routing/routes.dart';
 
 import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
@@ -55,10 +53,6 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   Widget build(BuildContext context) {
     var w = context.watch<AuthServices>();
-    var l = AppLocalizations.of(context);
-    if (l == null) {
-      return const SizedBox();
-    }
 
     return Scaffold(
       body: Padding(
@@ -68,17 +62,12 @@ class _OtpScreenState extends State<OtpScreen> {
           children: [
             SizedBox(height: MediaQuery.paddingOf(context).top + 50),
             Text(
-              l.verifyYourself,
-              style: TextStyle(
-                fontSize: 24.sp,
-                fontWeight: FontWeight.bold,
-              ),
+              "Verify Yourself",
+              style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
             ),
             Text(
-              "${l.enterVerificationSendTo} ${w.phoneNumber} ${l.inOrderToContinueJourney}",
-              style: const TextStyle(
-                fontSize: 16,
-              ),
+              "Enter the verification send to ${w.phoneNumber} in order to continue the journey",
+              style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 30),
             Pinput(
@@ -101,8 +90,8 @@ class _OtpScreenState extends State<OtpScreen> {
                   color: Colors.grey[200], // Keep color the same when focused
                   borderRadius: BorderRadius.circular(11),
                   border: Border.all(
-                      color: Colors.black
-                          .withOpacity(0.5)), // Thin black border when focused
+                    color: Colors.black.withOpacity(0.5),
+                  ), // Thin black border when focused
                 ),
               ),
               onTapOutside: (event) {
@@ -117,9 +106,7 @@ class _OtpScreenState extends State<OtpScreen> {
               },
               autofocus: true,
             ),
-            SizedBox(
-              height: 30.h,
-            ),
+            SizedBox(height: 30.h),
             DynamicButton(
               onPressed: isValidate.value
                   ? () async {
@@ -129,12 +116,12 @@ class _OtpScreenState extends State<OtpScreen> {
                           context.go(Routes.home.path);
                         }
                       } else {
-                        Fluttertoast.showToast(msg: l.invalidOtp);
+                        Fluttertoast.showToast(msg: "Invalid OTP");
                       }
                     }
                   : null,
               child: Text(
-                l.verify,
+                "Verify",
                 style: TextStyle(
                   fontSize: 17.sp,
                   fontWeight: FontWeight.bold,
@@ -144,51 +131,53 @@ class _OtpScreenState extends State<OtpScreen> {
             ),
             const SizedBox(height: 12),
             ValueListenableBuilder(
-                valueListenable: _timer,
-                builder: (context, value, _) {
-                  return AnimatedCrossFade(
-                    firstChild: Row(
-                      children: [
-                        Text(
-                          l.weWillSendCodeIn,
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                          ),
+              valueListenable: _timer,
+              builder: (context, value, _) {
+                return AnimatedCrossFade(
+                  firstChild: Row(
+                    children: [
+                      Text(
+                        "We will resend the code in",
+                        style: TextStyle(fontSize: 16.sp),
+                      ),
+                      Text(
+                        "${value}s",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
-                        Text(
-                          "${value}s",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
-                    ),
-                    secondChild: Row(
-                      children: [
-                        MaterialButton(
-                          onPressed: () {
-                            w.resend(onSend: (_) {
+                      ),
+                    ],
+                  ),
+                  secondChild: Row(
+                    children: [
+                      MaterialButton(
+                        onPressed: () {
+                          w.resend(
+                            onSend: (_) {
                               _timer.value = 59;
                               startTimer();
-                            });
-                          },
-                          child: Text(
-                            l.resendCode,
-                            style: TextStyle(
-                                fontSize: 18.sp,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.buttonColor),
+                            },
+                          );
+                        },
+                        child: Text(
+                          "Resend Code",
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.buttonColor,
                           ),
                         ),
-                      ],
-                    ),
-                    crossFadeState: value == 0
-                        ? CrossFadeState.showSecond
-                        : CrossFadeState.showFirst,
-                    duration: const Duration(milliseconds: 400),
-                  );
-                }),
+                      ),
+                    ],
+                  ),
+                  crossFadeState: value == 0
+                      ? CrossFadeState.showSecond
+                      : CrossFadeState.showFirst,
+                  duration: const Duration(milliseconds: 400),
+                );
+              },
+            ),
             const SizedBox(height: 16),
             SizedBox(height: 10 + MediaQuery.paddingOf(context).bottom),
           ],

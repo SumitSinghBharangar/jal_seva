@@ -3,17 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:gibili/common/buttons/dynamic_button.dart';
-import 'package:gibili/common/enum/enum.dart';
-import 'package:gibili/controller/language_change_controller.dart';
-import 'package:gibili/features/auth/services/auth_services.dart';
-import 'package:gibili/routing/routes.dart';
+
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:jal_seva/common/buttons/dynamic_button.dart';
+import 'package:jal_seva/features/auth/services/auth_services.dart';
+import 'package:jal_seva/routing/routes.dart';
 import 'package:provider/provider.dart';
 import '../../../common/app_colors.dart';
-import '../../../common/widgets/language_button.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -24,8 +21,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final ValueNotifier<bool> isValidate = ValueNotifier<bool>(false);
-  ValueNotifier<LanguageCode> selectedLanguage =
-      ValueNotifier<LanguageCode>(LanguageCode.en);
+
   final TextEditingController _phone = TextEditingController();
   bool _agreed = false;
 
@@ -37,10 +33,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var l = AppLocalizations.of(context);
-    if (l == null) {
-      return const SizedBox();
-    }
     var w = context.watch<AuthServices>();
 
     return Scaffold(
@@ -56,19 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      LaguageButton(
-                        onTap: () {
-                          _showLanguageChangeModel();
-                        },
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 40.h,
-                  ),
+                  SizedBox(height: 40.h),
                   Image.asset(
                     "assets/icons/project_icon.png",
                     height: 400.h,
@@ -83,29 +63,24 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 30.h,
-                ),
+                SizedBox(height: 30.h),
                 Text(
-                  l.getstartwithgibili,
+                  "Get started with Jal Seva",
                   style: TextStyle(
-                      fontSize: 19.sp,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w700),
+                    fontSize: 19.sp,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-                SizedBox(
-                  height: 15.h,
-                ),
+                SizedBox(height: 15.h),
                 Text(
-                  l.enterMobileNo,
+                  "Enter your mobile no",
                   style: TextStyle(
                     fontSize: 15.sp,
                     color: Colors.black.withOpacity(0.9),
                   ),
                 ),
-                SizedBox(
-                  height: 7.h,
-                ),
+                SizedBox(height: 7.h),
                 TextFormField(
                   controller: _phone,
                   keyboardType: TextInputType.phone,
@@ -127,9 +102,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return l.phoneNoCannotbeNull;
+                      return "Phone no can not be null";
                     } else if (value.length != 10) {
-                      return l.phoneMustbe10Chars;
+                      return "Phone Must be of 10 character";
                     }
                     return null;
                   },
@@ -144,9 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     });
                   },
                 ),
-                SizedBox(
-                  height: 5.h,
-                ),
+                SizedBox(height: 5.h),
                 FractionallySizedBox(
                   widthFactor: 1,
                   child: Center(
@@ -168,10 +141,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                           ),
                           Text(
-                            l.iAcceptThe,
-                            style: TextStyle(
-                              fontSize: 18.sp,
-                            ),
+                            "I accept the",
+                            style: TextStyle(fontSize: 18.sp),
                           ),
                           MaterialButton(
                             onPressed: () {
@@ -180,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               }
                             },
                             child: Text(
-                              l.termOfUse,
+                              "Term Of Use",
                               style: TextStyle(
                                 fontSize: 18.sp,
                                 fontWeight: FontWeight.bold,
@@ -201,15 +172,17 @@ class _LoginScreenState extends State<LoginScreen> {
                       ? () {
                           if (!_agreed) {
                             Fluttertoast.showToast(
-                                msg: l.pleaseAgreeTermCondition);
+                              msg: "Please agree to our Terms & conditions",
+                            );
                           } else {
                             w.sendOtp(
-                                phone: _phone.text,
-                                onSend: (_) {
-                                  if (_) {
-                                    context.go(Routes.otpScreen.path);
-                                  }
-                                });
+                              phone: _phone.text,
+                              onSend: (issended) {
+                                if (issended) {
+                                  context.go(Routes.otpScreen.path);
+                                }
+                              },
+                            );
                           }
                         }
                       : null,
@@ -229,144 +202,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 //   },
                 //   text: "SEND OTP",
                 // ),
-                SizedBox(
-                  height: MediaQuery.paddingOf(context).bottom + 25,
-                ),
+                SizedBox(height: MediaQuery.paddingOf(context).bottom + 25),
               ],
             ),
           ),
         ],
       ),
-    );
-  }
-
-  _showLanguageChangeModel() async {
-    var l = AppLocalizations.of(context);
-    if (l == null) {
-      return;
-    }
-    showCupertinoModalPopup(
-      context: context,
-      builder: (context) {
-        return GestureDetector(
-          onVerticalDragEnd: (details) {
-            if (details.primaryVelocity != null &&
-                details.primaryVelocity! > 0) {
-              Navigator.pop(context);
-            }
-          },
-          child: ClipRRect(
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(12),
-            ),
-            child: Container(
-              height: MediaQuery.sizeOf(context).height * .35,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(10),
-                ),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 15.h,
-                    ),
-                    Center(
-                      child: Container(
-                        height: 5.h,
-                        width: 30.w,
-                        decoration: BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.circular(20)),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20.h,
-                    ),
-                    Material(
-                      child: Text(
-                        l.changeLanguage,
-                        style: TextStyle(
-                          fontSize: 18.sp,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20.h,
-                    ),
-                    ValueListenableBuilder<LanguageCode>(
-                      valueListenable: selectedLanguage,
-                      builder: (context, value, child) {
-                        return Column(
-                          children: [
-                            Material(
-                              child: RadioListTile<LanguageCode>(
-                                title: Text(
-                                  l.english,
-                                  style: TextStyle(
-                                    fontSize: 17.sp,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                value: LanguageCode.en,
-                                groupValue: value,
-                                onChanged: (LanguageCode? newValue) {
-                                  selectedLanguage.value = newValue!;
-                                },
-                                controlAffinity: ListTileControlAffinity
-                                    .trailing, // Place radio button at trailing
-                              ),
-                            ),
-                            Material(
-                              child: RadioListTile<LanguageCode>(
-                                title: Text(
-                                  l.arabic,
-                                  style: TextStyle(
-                                      fontSize: 17.sp, color: Colors.black),
-                                ),
-                                value: LanguageCode.ar,
-                                groupValue: value,
-                                activeColor: Colors.green,
-                                onChanged: (LanguageCode? newValue) {
-                                  selectedLanguage.value = newValue!;
-                                },
-                                controlAffinity: ListTileControlAffinity
-                                    .trailing, // Place radio button at trailing
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                    SizedBox(
-                      height: 20.h,
-                    ),
-                    Consumer<LanguageChangeController>(
-                        builder: (context, languageController, child) {
-                      return Material(
-                        child: DynamicButton.fromText(
-                            text: l.setLanguage,
-                            onPressed: () {
-                              languageController.changeLanguage(
-                                Locale(
-                                  selectedLanguage.value.toString(),
-                                ),
-                              );
-                              Navigator.pop(context);
-                            }),
-                      );
-                    })
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 }

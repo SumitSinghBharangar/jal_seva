@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gibili/common/app_colors.dart';
-import 'package:gibili/common/fade_in.dart';
-import 'package:gibili/routing/routes.dart';
+
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:jal_seva/common/animations/fade_in.dart';
+import 'package:jal_seva/common/app_colors.dart';
+import 'package:jal_seva/routing/routes.dart';
 import 'package:lottie/lottie.dart';
 
 class OnbaordingScreen extends StatefulWidget {
@@ -48,9 +49,7 @@ class _OnbaordingScreenState extends State<OnbaordingScreen> {
                       AppColors.buttonColor,
                       BlendMode.srcIn,
                     ),
-                    child: Lottie.asset(
-                      'assets/lottie/wave.json',
-                    ),
+                    child: Lottie.asset('assets/lottie/wave.json'),
                   ),
                   Align(
                     alignment: Alignment.center,
@@ -122,22 +121,21 @@ class _OnbaordingScreenState extends State<OnbaordingScreen> {
                     alignment: Alignment.center,
                     child: IconButton(
                       style: IconButton.styleFrom(
-                          backgroundColor: AppColors.buttonColor,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.all(15)),
+                        backgroundColor: AppColors.buttonColor,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.all(15),
+                      ),
                       onPressed: () {
                         FocusManager.instance.primaryFocus?.unfocus();
                         if (page + 1 >= 4) {
                           context.go(Routes.login.path);
                         }
                         pageController.nextPage(
-                            duration: const Duration(milliseconds: 400),
-                            curve: Curves.fastEaseInToSlowEaseOut);
+                          duration: const Duration(milliseconds: 400),
+                          curve: Curves.fastEaseInToSlowEaseOut,
+                        );
                       },
-                      icon: const Icon(
-                        Iconsax.arrow_right_1,
-                        size: 40,
-                      ),
+                      icon: const Icon(Iconsax.arrow_right_1, size: 40),
                     ),
                   ),
                 ],
@@ -167,10 +165,7 @@ class _OnbaordingScreenState extends State<OnbaordingScreen> {
         ),
         Text(
           subtitle,
-          style: TextStyle(
-            fontSize: 16,
-            color: AppColors.buttonColor,
-          ),
+          style: TextStyle(fontSize: 16, color: AppColors.buttonColor),
         ),
       ],
     );
