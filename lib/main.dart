@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jal_seva/homepage.dart';
+import 'package:jal_seva/features/auth/services/auth_services.dart';
+
 import 'package:jal_seva/routing/route_config.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+
+  runApp(
+    MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => AuthServices())],
+      child: Consumer(
+        builder: (context, provider, child) {
+          return MyApp();
+        },
+      ),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
