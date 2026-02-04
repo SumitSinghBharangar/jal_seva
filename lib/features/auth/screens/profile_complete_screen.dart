@@ -12,7 +12,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 
-import 'package:image_picker/image_picker.dart';
+
 import 'package:jal_seva/common/app_colors.dart';
 import 'package:jal_seva/common/buttons/dynamic_button.dart';
 import 'package:jal_seva/common/buttons/scale_button.dart';

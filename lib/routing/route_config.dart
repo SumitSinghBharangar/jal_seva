@@ -9,7 +9,7 @@ import 'package:jal_seva/features/auth/screens/term_use_screen.dart';
 import 'package:jal_seva/routing/routes.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
-final _bottomNavKey = GlobalKey<NavigatorState>();
+// final _bottomNavKey = GlobalKey<NavigatorState>();
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
