@@ -49,6 +49,7 @@ dependencies:
   string_validator: ^1.2.0
   pinput: ^6.0.1
   lottie: ^3.3.2
+  firebase_core: ^2.32.0
 
 dev_dependencies:
   flutter_test:

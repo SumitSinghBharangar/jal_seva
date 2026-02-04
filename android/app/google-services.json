@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "783634576451",
+    "project_id": "jal-seva-f59e2",
+    "storage_bucket": "jal-seva-f59e2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:783634576451:android:9d56d45b9d215e335810f6",
+        "android_client_info": {
+          "package_name": "com.example.jal_seva"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnjUTBEBphPViJkFt1DacVYHl6GkZWzW4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
