@@ -4,12 +4,15 @@ import 'package:go_router/go_router.dart';
 import 'package:jal_seva/features/auth/screens/login_screen.dart';
 import 'package:jal_seva/features/auth/screens/onboarding/onbaording_screen.dart';
 import 'package:jal_seva/features/auth/screens/otp_screen.dart';
+import 'package:jal_seva/features/auth/screens/profile_complete_screen.dart';
 import 'package:jal_seva/features/auth/screens/splash_screen.dart';
 import 'package:jal_seva/features/auth/screens/term_use_screen.dart';
+import 'package:jal_seva/features/home/root/root_screen.dart';
+import 'package:jal_seva/features/home/screen/home_screen.dart';
 import 'package:jal_seva/routing/routes.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
-// final _bottomNavKey = GlobalKey<NavigatorState>();
+final _bottomNavKey = GlobalKey<NavigatorState>();
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
@@ -55,6 +58,7 @@ final router = GoRouter(
         return CupertinoPage(child: TermUseScreen());
       },
     ),
+
     // GoRoute(
     //   parentNavigatorKey: _rootNavigatorKey,
     //   path: Routes.savedAddresses.path,
@@ -117,17 +121,14 @@ final router = GoRouter(
     //     );
     //   },
     // ),
-
-    // GoRoute(
-    //   parentNavigatorKey: _rootNavigatorKey,
-    //   path: Routes.profileComplete.path,
-    //   name: Routes.profileComplete.name,
-    //   pageBuilder: (context, state) {
-    //     return const CupertinoPage(
-    //       child: ProfileCompleteScreen(),
-    //     );
-    //   },
-    // ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: Routes.profileComplete.path,
+      name: Routes.profileComplete.name,
+      pageBuilder: (context, state) {
+        return const CupertinoPage(child: ProfileCompleteScreen());
+      },
+    ),
     // GoRoute(
     //   parentNavigatorKey: _rootNavigatorKey,
     //   path: Routes.subscription.path,
@@ -304,54 +305,51 @@ final router = GoRouter(
     //     );
     //   },
     // ),
-    // ShellRoute(
-    //   navigatorKey: _bottomNavKey,
-    //   parentNavigatorKey: _rootNavigatorKey,
-    //   builder: (context, state, child) {
-    //     int index = state.fullPath == Routes.home.path
-    //         ? 0
-    //         : state.fullPath == Routes.order.path
-    //             ? 1
-    //             : state.fullPath == Routes.wallete.path
-    //                 ? 2
-    //                 : 3;
+    ShellRoute(
+      navigatorKey: _bottomNavKey,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state, child) {
+        int index = state.fullPath == Routes.home.path
+            ? 0
+            : state.fullPath == Routes.order.path
+            ? 1
+            : state.fullPath == Routes.wallete.path
+            ? 2
+            : 3;
 
-    //     return RootScreen(
-    //       selectedIndex: index,
-    //       child: child,
-    //     );
-    //   },
-    //   routes: [
-    //     GoRoute(
-    //       path: Routes.home.path,
-    //       name: Routes.home.name,
-    //       pageBuilder: (context, state) {
-    //         return const NoTransitionPage(child: HomeScreen());
-    //       },
-    //     ),
-    //     GoRoute(
-    //       path: Routes.wallete.path,
-    //       name: Routes.wallete.name,
-    //       pageBuilder: (context, state) {
-    //         return const NoTransitionPage(child: WalletScreen());
-    //       },
-    //     ),
-    //     GoRoute(
-    //       path: Routes.profile.path,
-    //       name: Routes.profile.name,
-    //       pageBuilder: (context, state) {
-    //         return const NoTransitionPage(child: ProfileScreen());
-    //       },
-    //     ),
-    //     GoRoute(
-    //       path: Routes.order.path,
-    //       name: Routes.order.name,
-    //       pageBuilder: (context, state) {
-    //         return const NoTransitionPage(child: OrderScreen());
-    //       },
-    //     ),
-    //   ],
-    // ),
+        return RootScreen(selectedIndex: index, child: child);
+      },
+      routes: [
+        GoRoute(
+          path: Routes.home.path,
+          name: Routes.home.name,
+          pageBuilder: (context, state) {
+            return const NoTransitionPage(child: HomeScreen());
+          },
+        ),
+        GoRoute(
+          path: Routes.wallete.path,
+          name: Routes.wallete.name,
+          pageBuilder: (context, state) {
+            return const NoTransitionPage(child: HomeScreen());
+          },
+        ),
+        GoRoute(
+          path: Routes.profile.path,
+          name: Routes.profile.name,
+          pageBuilder: (context, state) {
+            return const NoTransitionPage(child: HomeScreen());
+          },
+        ),
+        GoRoute(
+          path: Routes.order.path,
+          name: Routes.order.name,
+          pageBuilder: (context, state) {
+            return const NoTransitionPage(child: HomeScreen());
+          },
+        ),
+      ],
+    ),
   ],
   redirect: (context, state) {
     // if (state.fullPath == Routes.home.path) {
