@@ -89,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     FocusScope.of(context).unfocus();
                   },
                   decoration: InputDecoration(
-                    prefixText: "+966 ",
+                    prefixText: "+91 ",
                     prefixIcon: const Icon(Iconsax.call),
                     prefixStyle: const TextStyle(color: Colors.black),
                     enabledBorder: OutlineInputBorder(

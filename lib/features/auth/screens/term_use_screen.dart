@@ -43,20 +43,17 @@ class TermUseScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: 30.h),
+                          SizedBox(height: 40.h),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.arrow_back_ios_new),
-                              ),
-                              SizedBox(width: 16.w),
+                              SizedBox(),
                               Text(
                                 "Terms of Use",
                                 style: TextStyle(
-                                  fontSize: 18.sp,
+                                  fontSize: 20.sp,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

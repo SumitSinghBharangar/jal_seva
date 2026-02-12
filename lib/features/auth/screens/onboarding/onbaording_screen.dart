@@ -62,7 +62,7 @@ class _OnbaordingScreenState extends State<OnbaordingScreen> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(200),
                         child: Image.asset(
-                          'assets/images/logo.jpeg',
+                          'assets/images/logo.jpg',
                           height: MediaQuery.sizeOf(context).width * .3,
                         ),
                       ),
@@ -82,7 +82,7 @@ class _OnbaordingScreenState extends State<OnbaordingScreen> {
                 scrollDirection: Axis.vertical,
                 children: [
                   _buildOnboardingText(
-                    title: 'Welcome to Gibili',
+                    title: 'Welcome to Jal-Seva',
                     subtitle: "Water tank filling system.",
                   ),
                   _buildOnboardingText(

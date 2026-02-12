@@ -112,9 +112,10 @@ class _OtpScreenState extends State<OtpScreen> {
                   ? () async {
                       var r = await w.verifyOTP(otp: _otp.text);
                       if (r) {
-                        if (context.mounted) {
-                          context.go(Routes.home.path);
-                        }
+                        Fluttertoast.showToast(msg: "Login successfull");
+                        // if (context.mounted) {
+                        //   context.go(Routes.home.path);
+                        // }
                       } else {
                         Fluttertoast.showToast(msg: "Invalid OTP");
                       }
