@@ -117,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               // );
 
                               // context.push(Routes.profile.path);
-                              context.push(Routes.notificationScreen.path);
+                              context.push(Routes.notificationScreen.path); 
                             },
                             icon: const Icon(
                               Iconsax.notification_bing,
