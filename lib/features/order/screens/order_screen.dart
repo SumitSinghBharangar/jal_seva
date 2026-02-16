@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jal_seva/common/app_colors.dart';
 import 'package:jal_seva/common/buttons/scale_button.dart';
+import 'package:jal_seva/features/order/screens/previous_orders.dart';
+import 'package:jal_seva/features/order/screens/upcomming_orders.dart';
 
 class OrderScreen extends StatefulWidget {
   const OrderScreen({super.key});

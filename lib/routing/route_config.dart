@@ -9,6 +9,7 @@ import 'package:jal_seva/features/auth/screens/splash_screen.dart';
 import 'package:jal_seva/features/auth/screens/term_use_screen.dart';
 import 'package:jal_seva/features/home/root/root_screen.dart';
 import 'package:jal_seva/features/home/screen/home_screen.dart';
+import 'package:jal_seva/features/order/screens/order_screen.dart';
 import 'package:jal_seva/routing/routes.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -345,7 +346,7 @@ final router = GoRouter(
           path: Routes.order.path,
           name: Routes.order.name,
           pageBuilder: (context, state) {
-            return const NoTransitionPage(child: HomeScreen());
+            return const NoTransitionPage(child: OrderScreen());
           },
         ),
       ],
