@@ -44,20 +44,16 @@ class TermUseScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: 40.h),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SizedBox(),
-                              Text(
-                                "Terms of Use",
-                                style: TextStyle(
-                                  fontSize: 20.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              "Terms of Use",
+                              style: TextStyle(
+                                fontSize: 26.sp,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
                               ),
-                            ],
+                            ),
                           ),
                           SizedBox(height: 32.h),
                           RichText(
@@ -70,47 +66,74 @@ class TermUseScreen extends StatelessWidget {
                               children: const [
                                 TextSpan(
                                   text:
-                                      "Please indicate your approval and understanding before starting your clinic visit with a Telemedicine Hub healthcare provider.\n",
+                                      "Welcome to our Drinking Water Delivery Application. By registering or using this application, you agree to comply with the following terms and conditions\n",
+                                ),
+                                TextSpan(
+                                  text: "\n1. Service Description.\n",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 21,
+                                  ),
                                 ),
                                 TextSpan(
                                   text:
-                                      "\nI ACKNOWLEDGE THAT TELEMEDICINE HUB CLINIC VISIT IS NOT DESIGNED OR INTENDED OR APPROPRIATE TO ADDRESS SERIOUS, EMERGENCY, OR ANY LIFE THREATINING MEDICAL CONDITIONS AND SHOULD NOT BE USED IN THOSE CIRCUMSTANCES.\n",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                      "\nThis application provides doorstep delivery of drinking water through subscription-based and instant ordering options. Delivery schedules depend on user selection and service availability in your area.\n",
+                                ),
+
+                                TextSpan(
+                                  text: "\n2. User Responsibilities.\n",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 21,
+                                  ),
                                 ),
                                 TextSpan(
                                   text:
-                                      "\nI acknowledge that I will answer questions truthfully and that if I do not understand a question, I will stop using Telemedicine Hub clinic.",
+                                      "\nUsers must provide accurate personal information, delivery address, and contact details. Any misuse of the application, including false orders or incorrect details, may result in suspension of the account.\n",
+                                ),
+                                TextSpan(
+                                  text: "\n3. Orders and Subscription\n",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 21,
+                                  ),
                                 ),
                                 TextSpan(
                                   text:
-                                      "\nI understand and acknowledge that my ",
+                                      "\nSubscription plans will be delivered as per the selected schedule. Instant orders are subject to availability and confirmation. Users can modify or cancel orders within the allowed time limit.\n",
+                                ),
+                                TextSpan(
+                                  text: "\n4. Payments\n",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 21,
+                                  ),
                                 ),
                                 TextSpan(
                                   text:
-                                      "Telemedicine Hub clinic will establish a therapeutic clinician patient relationship and that my visit information will result in the creation of a medical record of Telemedicine Hub.\n",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                      "\nAll payments must be completed through the available payment methods in the application. Prices may vary depending on quantity and location.\n",
                                 ),
-                                TextSpan(text: "\nI acknowledge that I have "),
                                 TextSpan(
-                                  text: "agreed to the Terms of use, ",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                TextSpan(text: "and I "),
-                                TextSpan(
-                                  text: "understand the privacy policy",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  text: "\n5. Service Availability\n",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 21,
+                                  ),
                                 ),
                                 TextSpan(
                                   text:
-                                      "and Telemedicine Hub’s notice of privacy practices which describes how my provider(s) will use and disclose my information and informs me of my rights relating to my information.\n",
+                                      "\nDelivery timing may vary due to traffic, weather, or unforeseen circumstances.\n",
                                 ),
                                 TextSpan(
-                                  text: "\nConsent for treatment: ",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  text: "\n6. Privacy\n",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 21,
+                                  ),
                                 ),
                                 TextSpan(
                                   text:
-                                      "I will have a chance to discuss and /or refuse the care recommended by my Telemedicine Hub clinic provider, certified clinician licensed to practice medicine in Iraq. Telemedicine Hub providers cannot promise specific results. To provide this care, my Telemedicine Hub clinic provider will rely on information I provide about my health, including genetic information such as family health history.\nElectronic health record: Telemedicine Hub clinic uses shared electronic health records. This allows care providers using this record to store, update, and use my health information when needed at the time I am seeking care. the electronic health record allows better access to my health information, leading to better coordination and quality of care. this shared electronic health record is a secure system. For a list of the health care providers that use this shared electronic health record please contact us at the phone number listed below.\nI acknowledge that any care provider who uses this shared electronic health record may access and use my health records as needed to provide treatment (including coordinating my care) and to improve the quality of care.\nIf I have concerns with parts of this consent, I will call the number below to discuss them.\nThe authorization on this form will remain valid until I revoke (withdraw) them in writing or until the law states that they have expired. However, any actions already taken in reliance upon these authorizations will remain valid. (I cannot undo actions that were taken while my consent was valid).\nI may get help with this process at any time by contacting Telemedicine Hub clinic.\nBy signing this form, I consent to and authorize the Telemedicine Hub clinic medical provider to assess and recommend treatment if necessary.",
+                                      "\nUser information will be kept secure and used only for order processing and service improvement.\n\nBy continuing to use this application, you agree to these terms and conditions.",
                                 ),
                               ],
                             ),
