@@ -2,16 +2,15 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
-
+import 'package:image_picker/image_picker.dart';
 
 import 'package:jal_seva/common/app_colors.dart';
 import 'package:jal_seva/common/buttons/dynamic_button.dart';
@@ -103,7 +102,7 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
                     ScaleButton(
                       scale: 0.97,
                       onTap: () async {
-                        // await _pickNUpload();
+                        await _pickNUpload();
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -283,9 +282,7 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
 
   Future<void> _updateProfile() async {
     if (imageUploading) {
-      Fluttertoast.showToast(
-        msg: "Please wait while image is uploading",
-      );
+      Fluttertoast.showToast(msg: "Please wait while image is uploading");
       return;
     }
 
@@ -303,35 +300,35 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
     }
   }
 
-  // Future<void> _pickNUpload() async {
-  //   var r = await ImagePicker().pickImage(source: ImageSource.gallery);
-  //   if (r != null) {
-  //     imageUrl = null;
-  //     pickedImage = File(r.path);
-  //     imageUploading = true;
-  //     setState(() {
-  //       var u = FirebaseAuth.instance.currentUser?.uid;
-  //       var ref = FirebaseStorage.instance.ref(u);
-  //       ref = ref.child('profilePicture');
-  //       ref.putData(pickedImage!.readAsBytesSync()).whenComplete(() async {
-  //         String url = await ref.getDownloadURL();
-  //         imageUrl = url;
-  //         await FirebaseAuth.instance.currentUser?.updatePhotoURL(url);
-  //         await FirebaseAuth.instance.currentUser?.reload();
-  //         imageUploading = false;
-  //         setState(() {});
-  //       });
-  //     });
-  //     // var c = await ImageCropper().cropImage(
-  //     //     sourcePath: r.path,
-  //     //     aspectRatio: const CropAspectRatio(ratioX: 2, ratioY: 2));
-  //     // if (c != null) {
-  //     //   imageUrl = null;
-  //     //   pickedImage = File(c.path);
-  //     //   imageUploading = true;
-  //     //   setState(() {});
+  Future<void> _pickNUpload() async {
+    var r = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (r != null) {
+      imageUrl = null;
+      pickedImage = File(r.path);
+      imageUploading = true;
+      setState(() {
+        var u = FirebaseAuth.instance.currentUser?.uid;
+        var ref = FirebaseStorage.instance.ref(u);
+        ref = ref.child('profilePicture');
+        ref.putData(pickedImage!.readAsBytesSync()).whenComplete(() async {
+          String url = await ref.getDownloadURL();
+          imageUrl = url;
+          await FirebaseAuth.instance.currentUser?.updatePhotoURL(url);
+          await FirebaseAuth.instance.currentUser?.reload();
+          imageUploading = false;
+          setState(() {});
+        });
+      });
+      // var c = await ImageCropper().cropImage(
+      //     sourcePath: r.path,
+      //     aspectRatio: const CropAspectRatio(ratioX: 2, ratioY: 2));
+      // if (c != null) {
+      //   imageUrl = null;
+      //   pickedImage = File(c.path);
+      //   imageUploading = true;
+      //   setState(() {});
 
-  //     // }
-  //   }
-  // }
+      // }
+    }
+  }
 }

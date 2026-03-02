@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -26,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchUser();
+
       // var p = Provider.of<AuthServices>(context, listen: false);
       // addressId = p.primaryAdress;
       // fetchAddress();
@@ -33,7 +36,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _fetchUser() async {
-    FirebaseAuth.instance.currentUser?.displayName == null
+    FirebaseAuth.instance.currentUser?.displayName == "" ||
+            FirebaseAuth.instance.currentUser?.displayName == null
         ? context.go(Routes.profileComplete.path)
         : null;
   }
@@ -117,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               // );
 
                               // context.push(Routes.profile.path);
-                              context.push(Routes.notificationScreen.path); 
+                              context.push(Routes.notificationScreen.path);
                             },
                             icon: const Icon(
                               Iconsax.notification_bing,
