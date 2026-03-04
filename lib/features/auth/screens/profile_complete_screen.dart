@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
@@ -9,6 +11,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -128,59 +131,70 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
               ),
               SizedBox(height: 20.h),
               if (pickedImage != null)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(50),
-                  child: Container(
-                    height: 100,
-                    width: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(.2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Stack(
-                      children: [
-                        if (imageUrl == null && pickedImage == null)
-                          const Center(child: Icon(Iconsax.image, size: 40)),
-                        if (pickedImage != null && imageUrl == null)
-                          Positioned.fill(child: Image.file(pickedImage!)),
-                        if (imageUrl != null)
-                          Positioned.fill(
-                            child: Image.network(
-                              imageUrl!,
-                              loadingBuilder:
-                                  (context, child, loadingProgress) {
-                                    if (loadingProgress
-                                            ?.cumulativeBytesLoaded ==
-                                        null) {
-                                      return child;
-                                    }
-                                    return const SpinKitWaveSpinner(
-                                      waveColor: Colors.black,
-                                      size: 80,
-                                      color: Colors.black,
-                                    );
-                                  },
+                ScaleButton(
+                  scale: 0.98,
+                  onTap: () async {
+                    await _pickNUpload();
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(50),
+
+                    child: Container(
+                      height: 100,
+                      width: 100,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Stack(
+                        children: [
+                          if (imageUrl == null && pickedImage == null)
+                            const Center(child: Icon(Iconsax.image, size: 40)),
+                          if (pickedImage != null && imageUrl == null)
+                            Positioned.fill(child: Image.file(pickedImage!)),
+                          if (imageUrl != null)
+                            Positioned.fill(
+                              child: Image.network(
+                                imageUrl!,
+                                fit: BoxFit.fitWidth,
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                      if (loadingProgress
+                                              ?.cumulativeBytesLoaded ==
+                                          null) {
+                                        return child;
+                                      }
+                                      return const SpinKitWaveSpinner(
+                                        waveColor: Colors.black,
+                                        size: 80,
+                                        color: Colors.black,
+                                      );
+                                    },
+                              ),
                             ),
-                          ),
-                        if (imageUploading)
-                          Positioned.fill(
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                              child: const SizedBox.expand(),
+                          if (imageUploading)
+                            Positioned.fill(
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(
+                                  sigmaX: 10,
+                                  sigmaY: 10,
+                                ),
+                                child: const SizedBox.expand(),
+                              ),
                             ),
-                          ),
-                        if (imageUploading)
-                          Container(color: Colors.white.withOpacity(.3)),
-                        if (imageUploading)
-                          const Align(
-                            alignment: Alignment.center,
-                            child: SpinKitWaveSpinner(
-                              waveColor: Colors.black,
-                              size: 80,
-                              color: Colors.black,
+                          if (imageUploading)
+                            Container(color: Colors.white.withOpacity(.3)),
+                          if (imageUploading)
+                            const Align(
+                              alignment: Alignment.center,
+                              child: SpinKitWaveSpinner(
+                                waveColor: Colors.black,
+                                size: 80,
+                                color: Colors.black,
+                              ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -301,34 +315,66 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
   }
 
   Future<void> _pickNUpload() async {
-    var r = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (r != null) {
-      imageUrl = null;
-      pickedImage = File(r.path);
-      imageUploading = true;
-      setState(() {
-        var u = FirebaseAuth.instance.currentUser?.uid;
-        var ref = FirebaseStorage.instance.ref(u);
-        ref = ref.child('profilePicture');
-        ref.putData(pickedImage!.readAsBytesSync()).whenComplete(() async {
-          String url = await ref.getDownloadURL();
-          imageUrl = url;
-          await FirebaseAuth.instance.currentUser?.updatePhotoURL(url);
-          await FirebaseAuth.instance.currentUser?.reload();
-          imageUploading = false;
-          setState(() {});
-        });
-      });
-      // var c = await ImageCropper().cropImage(
-      //     sourcePath: r.path,
-      //     aspectRatio: const CropAspectRatio(ratioX: 2, ratioY: 2));
-      // if (c != null) {
-      //   imageUrl = null;
-      //   pickedImage = File(c.path);
-      //   imageUploading = true;
-      //   setState(() {});
+    var r = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 60,
+    );
 
-      // }
+    if (r != null) {
+      pickedImage = File(r.path);
+      setState(() {
+        imageUploading = true;
+        imageUrl = null;
+        pickedImage = File(r.path);
+      });
+
+      try {
+        var user = FirebaseAuth.instance.currentUser;
+        if (user == null) return;
+
+        final url = Uri.parse(
+          "https://api.cloudinary.com/v1_1/dt5tyb0ym/image/upload",
+        );
+
+        var request = http.MultipartRequest("POST", url);
+
+        request.fields['upload_preset'] = "Jal_Seva";
+
+        request.fields['public_id'] = user.uid;
+        request.fields['overwrite'] = 'true';
+
+        request.files.add(
+          await http.MultipartFile.fromPath('file', pickedImage!.path),
+        );
+
+        var response = await request.send();
+
+        if (response.statusCode == 200) {
+          var responseData = await response.stream.bytesToString();
+          var jsonData = json.decode(responseData);
+
+          String secureUrl = jsonData['secure_url'];
+          log(secureUrl);
+
+          // Save to Firebase Auth profile (optional but good)
+          await user.updatePhotoURL(secureUrl);
+          await user.reload();
+
+          setState(() {
+            imageUrl = secureUrl;
+            imageUploading = false;
+          });
+        } else {
+          setState(() {
+            imageUploading = false;
+          });
+        }
+      } catch (e) {
+        setState(() {
+          imageUploading = false;
+        });
+        print("Upload Error: $e");
+      }
     }
   }
 }
