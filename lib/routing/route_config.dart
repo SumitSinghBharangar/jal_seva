@@ -9,6 +9,7 @@ import 'package:jal_seva/features/auth/screens/splash_screen.dart';
 import 'package:jal_seva/features/auth/screens/term_use_screen.dart';
 import 'package:jal_seva/features/home/root/root_screen.dart';
 import 'package:jal_seva/features/home/screen/home_screen.dart';
+import 'package:jal_seva/features/order/screens/new_order_screen.dart';
 import 'package:jal_seva/features/order/screens/order_screen.dart';
 import 'package:jal_seva/routing/routes.dart';
 
@@ -102,16 +103,14 @@ final router = GoRouter(
     //     );
     //   },
     // ),
-    // GoRoute(
-    //   parentNavigatorKey: _rootNavigatorKey,
-    //   path: Routes.newOrder.path,
-    //   name: Routes.newOrder.name,
-    //   pageBuilder: (context, state) {
-    //     return const CupertinoPage(
-    //       child: NewOrderScreen(),
-    //     );
-    //   },
-    // ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: Routes.newOrder.path,
+      name: Routes.newOrder.name,
+      pageBuilder: (context, state) {
+        return const CupertinoPage(child: NewOrderScreen());
+      },
+    ),
     // GoRoute(
     //   parentNavigatorKey: _rootNavigatorKey,
     //   path: Routes.chatScreen.path,
