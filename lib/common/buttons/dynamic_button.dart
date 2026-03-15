@@ -4,16 +4,16 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:jal_seva/common/buttons/scale_button.dart';
 
-
 class DynamicButton extends StatefulWidget {
-  const DynamicButton(
-      {super.key,
-      required this.child,
-      this.onPressed,
-      this.isLoading,
-      this.style,
-      this.color,
-      this.foregroundColor});
+  const DynamicButton({
+    super.key,
+    required this.child,
+    this.onPressed,
+    this.isLoading,
+    this.style,
+    this.color,
+    this.foregroundColor,
+  });
 
   @override
   State<DynamicButton> createState() => _DynamicButtonState();
@@ -83,10 +83,10 @@ class _DynamicButtonState extends State<DynamicButton> {
           onTap: (widget.onPressed == null || (widget.isLoading ?? false))
               ? null
               : _isLoading
-                  ? null
-                  : () {
-                      func();
-                    },
+              ? null
+              : () {
+                  func();
+                },
           // child: FilledButton(
           // style: widget.style ??
           //     FilledButton.styleFrom(
@@ -110,9 +110,9 @@ class _DynamicButtonState extends State<DynamicButton> {
             decoration: BoxDecoration(
               color:
                   ((widget.onPressed == null || (widget.isLoading ?? false)) ||
-                          _isLoading)
-                      ? Colors.grey.withOpacity(.5)
-                      : const Color(0xFF028353),
+                      _isLoading)
+                  ? Colors.grey.withOpacity(.5)
+                  : const Color(0xFF028353),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Center(

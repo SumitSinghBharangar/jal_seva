@@ -315,66 +315,63 @@ class _ProfileCompleteScreenState extends State<ProfileCompleteScreen> {
   }
 
   Future<void> _pickNUpload() async {
-    var r = await ImagePicker().pickImage(
+    final picker = ImagePicker();
+
+    final pickedFile = await picker.pickImage(
       source: ImageSource.gallery,
       imageQuality: 60,
     );
 
-    if (r != null) {
-      pickedImage = File(r.path);
-      setState(() {
-        imageUploading = true;
-        imageUrl = null;
-        pickedImage = File(r.path);
-      });
+    if (pickedFile == null) return;
 
-      try {
-        var user = FirebaseAuth.instance.currentUser;
-        if (user == null) return;
+    setState(() {
+      pickedImage = File(pickedFile.path);
+      imageUploading = true;
+    });
 
-        final url = Uri.parse(
-          "https://api.cloudinary.com/v1_1/dt5tyb0ym/image/upload",
-        );
+    try {
+      final cloudName = "dt5tyb0ym";
 
-        var request = http.MultipartRequest("POST", url);
+      final url = Uri.parse(
+        "https://api.cloudinary.com/v1_1/$cloudName/image/upload",
+      );
 
-        request.fields['upload_preset'] = "Jal_Seva";
+      var request = http.MultipartRequest("POST", url);
 
-        request.fields['public_id'] = user.uid;
-        request.fields['overwrite'] = 'true';
+      request.fields['upload_preset'] = "Jal_Seva";
 
-        request.files.add(
-          await http.MultipartFile.fromPath('file', pickedImage!.path),
-        );
+      request.files.add(
+        await http.MultipartFile.fromPath("file", pickedImage!.path),
+      );
 
-        var response = await request.send();
+      var response = await request.send();
 
-        if (response.statusCode == 200) {
-          var responseData = await response.stream.bytesToString();
-          var jsonData = json.decode(responseData);
+      var responseData = await response.stream.bytesToString();
 
-          String secureUrl = jsonData['secure_url'];
-          log(secureUrl);
+      if (response.statusCode == 200) {
+        var jsonData = jsonDecode(responseData);
 
-          // Save to Firebase Auth profile (optional but good)
-          await user.updatePhotoURL(secureUrl);
-          await user.reload();
+        String secureUrl = jsonData['secure_url'];
 
-          setState(() {
-            imageUrl = secureUrl;
-            imageUploading = false;
-          });
-        } else {
-          setState(() {
-            imageUploading = false;
-          });
-        }
-      } catch (e) {
+        setState(() {
+          imageUrl = secureUrl;
+          imageUploading = false;
+        });
+
+        print("Upload Success: $secureUrl");
+      } else {
+        print("Upload Failed: $responseData");
+
         setState(() {
           imageUploading = false;
         });
-        print("Upload Error: $e");
       }
+    } catch (e) {
+      print("Upload Error: $e");
+
+      setState(() {
+        imageUploading = false;
+      });
     }
   }
 }
