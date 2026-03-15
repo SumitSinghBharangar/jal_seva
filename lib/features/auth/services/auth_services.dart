@@ -121,45 +121,45 @@ class AuthServices extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    // var u = FirebaseAuth.instance.currentUser!;
+    var u = FirebaseAuth.instance.currentUser!;
 
-    // var data = await users.doc(u.uid).get();
+    var data = await users.doc(u.uid).get();
 
     // String? token = await FirebaseMessaging.instance.getToken();
 
-    // if (data.exists) {
-    //   primaryAdress = (data.data()!)['primaryAdress'] as String?;
+    if (data.exists) {
+      primaryAdress = (data.data()!)['primaryAdress'] as String?;
 
-    //   await users.doc(u.uid).update({
-    //     'tokens': FieldValue.arrayUnion([token]),
-    //   });
+      // await users.doc(u.uid).update({
+      //   'tokens': FieldValue.arrayUnion([token]),
+      // });
 
-    //   notifyListeners();
-    // } else {
-    //   await users.doc(u.uid).set({
-    //     'uid': u.uid,
-    //     'phone': u.phoneNumber,
-    //     'primaryAdress': null,
-    //     'createdAt': Timestamp.fromDate(
-    //       u.metadata.creationTime ?? DateTime.now(),
-    //     ),
-    //     'lastSignIn': Timestamp.fromDate(
-    //       u.metadata.lastSignInTime ?? DateTime.now(),
-    //     ),
-    //     'tokens': [token],
-    //   });
-    // }
+      notifyListeners();
+    } else {
+      await users.doc(u.uid).set({
+        'uid': u.uid,
+        'phone': u.phoneNumber,
+        'primaryAdress': null,
+        'createdAt': Timestamp.fromDate(
+          u.metadata.creationTime ?? DateTime.now(),
+        ),
+        'lastSignIn': Timestamp.fromDate(
+          u.metadata.lastSignInTime ?? DateTime.now(),
+        ),
+        // 'tokens': [token],
+      });
+    }
 
-    // if (u.displayName == null) {
-    //   try {
-    //     var data = await users.doc(u.uid).get();
-    //     if (data.data() == null) {
-    //       user = UserModel.fromMap(data.data()!);
-    //     }
-    //   } catch (e) {
-    //     log(e.toString());
-    //   }
-    // }
+    if (u.displayName == null) {
+      try {
+        var data = await users.doc(u.uid).get();
+        if (data.data() == null) {
+          var user = UserModel.fromMap(data.data()!);
+        }
+      } catch (e) {
+        log(e.toString());
+      }
+    }
     var r = await _getCurrentLocationName();
     location = r;
 
@@ -184,8 +184,7 @@ class AuthServices extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
     var u = FirebaseAuth.instance.currentUser!;
-    await FirebaseAuth.instance.currentUser?.updateDisplayName(name);
-    await FirebaseAuth.instance.currentUser?.reload();
+
     UserModel user = UserModel(
       uid: u.uid,
       name: name,
@@ -196,6 +195,8 @@ class AuthServices extends ChangeNotifier {
       createdAt: u.metadata.creationTime ?? DateTime.now(),
       updatedAt: DateTime.now(),
     );
+    await FirebaseAuth.instance.currentUser?.updateDisplayName(name);
+    await FirebaseAuth.instance.currentUser?.reload();
 
     try {
       await users.doc(u.uid).update(user.toMap());
