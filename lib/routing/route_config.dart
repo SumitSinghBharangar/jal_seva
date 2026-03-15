@@ -11,6 +11,7 @@ import 'package:jal_seva/features/home/root/root_screen.dart';
 import 'package:jal_seva/features/home/screen/home_screen.dart';
 import 'package:jal_seva/features/order/screens/new_order_screen.dart';
 import 'package:jal_seva/features/order/screens/order_screen.dart';
+import 'package:jal_seva/features/profile/screens/new_address_screen.dart';
 import 'package:jal_seva/routing/routes.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -81,16 +82,14 @@ final router = GoRouter(
     //     );
     //   },
     // ),
-    // GoRoute(
-    //   parentNavigatorKey: _rootNavigatorKey,
-    //   path: Routes.newAddress.path,
-    //   name: Routes.newAddress.name,
-    //   pageBuilder: (context, state) {
-    //     return const CupertinoPage(
-    //       child: NewAddressScreen(),
-    //     );
-    //   },
-    // ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: Routes.newAddress.path,
+      name: Routes.newAddress.name,
+      pageBuilder: (context, state) {
+        return const CupertinoPage(child: NewAddressScreen());
+      },
+    ),
     // GoRoute(
     // parentNavigatorKey: _rootNavigatorKey,
     // GoRoute(
