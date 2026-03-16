@@ -12,6 +12,9 @@ import 'package:jal_seva/features/home/screen/home_screen.dart';
 import 'package:jal_seva/features/order/screens/new_order_screen.dart';
 import 'package:jal_seva/features/order/screens/order_screen.dart';
 import 'package:jal_seva/features/profile/screens/new_address_screen.dart';
+import 'package:jal_seva/features/profile/screens/profile_edit_screen.dart';
+import 'package:jal_seva/features/profile/screens/profile_screen.dart';
+import 'package:jal_seva/features/profile/screens/saved_address.dart';
 import 'package:jal_seva/routing/routes.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -62,16 +65,14 @@ final router = GoRouter(
       },
     ),
 
-    // GoRoute(
-    //   parentNavigatorKey: _rootNavigatorKey,
-    //   path: Routes.savedAddresses.path,
-    //   name: Routes.savedAddresses.name,
-    //   pageBuilder: (context, state) {
-    //     return const CupertinoPage(
-    //       child: SavedAddress(),
-    //     );
-    //   },
-    // ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: Routes.savedAddresses.path,
+      name: Routes.savedAddresses.name,
+      pageBuilder: (context, state) {
+        return const CupertinoPage(child: SavedAddress());
+      },
+    ),
     // GoRoute(
     //   parentNavigatorKey: _rootNavigatorKey,
     //   path: Routes.transectionScreen.path,
@@ -191,16 +192,14 @@ final router = GoRouter(
     //     ));
     //   },
     // ),
-    // GoRoute(
-    //   parentNavigatorKey: _rootNavigatorKey,
-    //   path: Routes.profileEditScreen.path,
-    //   name: Routes.profileEditScreen.name,
-    //   pageBuilder: (context, state) {
-    //     return const CupertinoPage(
-    //       child: ProfileEditScreen(),
-    //     );
-    //   },
-    // ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: Routes.profileEditScreen.path,
+      name: Routes.profileEditScreen.name,
+      pageBuilder: (context, state) {
+        return const CupertinoPage(child: ProfileEditScreen());
+      },
+    ),
     // GoRoute(
     //   parentNavigatorKey: _rootNavigatorKey,
     //   path: Routes.orderPlaced.path,
@@ -337,7 +336,7 @@ final router = GoRouter(
           path: Routes.profile.path,
           name: Routes.profile.name,
           pageBuilder: (context, state) {
-            return const NoTransitionPage(child: HomeScreen());
+            return const NoTransitionPage(child: ProfileScreen());
           },
         ),
         GoRoute(
