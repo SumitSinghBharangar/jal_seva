@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +52,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   borderRadius: BorderRadius.circular(100),
                   child: Image.network(
                     user.photoURL ??
-                        "https://newprofilepic.photo-cdn.net//assets/images/article/profile.jpg?90af0c8",
+                        "https://static.vecteezy.com/system/resources/thumbnails/032/176/191/small_2x/business-avatar-profile-black-icon-man-of-user-symbol-in-trendy-flat-style-isolated-on-male-profile-people-diverse-face-for-social-network-or-web-vector.jpg",
                   ),
                 ),
                 title: Text(
@@ -66,7 +68,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 trailing: IconButton(
                   onPressed: () {
-                    context.push(Routes.profileEditScreen.path);
+                    if (context.mounted) {
+                      context.push(Routes.profileEditScreen.path);
+                    }
                   },
                   icon: Icon(Iconsax.edit, color: AppColors.appDarkColor),
                 ),

@@ -250,8 +250,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   hintText: "Enter Phone Number",
                 ),
               ),
-              const Spacer(),
-              const Spacer(),
+              SizedBox(height: 40),
+
               DynamicButton(
                 onPressed: _fKey.currentState?.validate() ?? false
                     ? () async {
@@ -299,7 +299,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         mail: _mail.text,
         imageUrl: imageUrl!,
       );
-      
+
       if (mounted) {
         context.go(Routes.home.path);
       }
