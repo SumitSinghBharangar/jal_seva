@@ -48,7 +48,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: ListTile(
                 leading: ClipRRect(
                   borderRadius: BorderRadius.circular(100),
-                  child: Image.network(user.photoURL!),
+                  child: Image.network(
+                    user.photoURL ??
+                        "https://newprofilepic.photo-cdn.net//assets/images/article/profile.jpg?90af0c8",
+                  ),
                 ),
                 title: Text(
                   user.displayName!,

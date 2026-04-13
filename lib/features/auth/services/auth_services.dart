@@ -196,6 +196,7 @@ class AuthServices extends ChangeNotifier {
       updatedAt: DateTime.now(),
     );
     await FirebaseAuth.instance.currentUser?.updateDisplayName(name);
+    await FirebaseAuth.instance.currentUser?.updatePhotoURL(imageUrl);
     await FirebaseAuth.instance.currentUser?.reload();
 
     try {

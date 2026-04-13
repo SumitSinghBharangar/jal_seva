@@ -1,13 +1,15 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jal_seva/common/app_colors.dart';
@@ -297,6 +299,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         mail: _mail.text,
         imageUrl: imageUrl!,
       );
+      
       if (mounted) {
         context.go(Routes.home.path);
       }
@@ -304,34 +307,63 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   }
 
   Future<void> _pickNUpload() async {
-    var r = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (r != null) {
-      imageUrl = null;
-      pickedImage = File(r.path);
-      imageUploading = true;
-      setState(() {
-        var u = FirebaseAuth.instance.currentUser?.uid;
-        var ref = FirebaseStorage.instance.ref(u);
-        ref = ref.child('profilePicture');
-        ref.putData(pickedImage!.readAsBytesSync()).whenComplete(() async {
-          String url = await ref.getDownloadURL();
-          imageUrl = url;
-          await FirebaseAuth.instance.currentUser?.updatePhotoURL(url);
-          await FirebaseAuth.instance.currentUser?.reload();
-          imageUploading = false;
-          setState(() {});
-        });
-      });
-      // var c = await ImageCropper().cropImage(
-      //     sourcePath: r.path,
-      //     aspectRatio: const CropAspectRatio(ratioX: 2, ratioY: 2));
-      // if (c != null) {
-      //   imageUrl = null;
-      //   pickedImage = File(c.path);
-      //   imageUploading = true;
-      //   setState(() {});
+    final picker = ImagePicker();
 
-      // }
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 60,
+    );
+
+    if (pickedFile == null) return;
+
+    setState(() {
+      pickedImage = File(pickedFile.path);
+      imageUploading = true;
+    });
+
+    try {
+      final cloudName = "dt5tyb0ym";
+
+      final url = Uri.parse(
+        "https://api.cloudinary.com/v1_1/$cloudName/image/upload",
+      );
+
+      var request = http.MultipartRequest("POST", url);
+
+      request.fields['upload_preset'] = "Jal_Seva";
+
+      request.files.add(
+        await http.MultipartFile.fromPath("file", pickedImage!.path),
+      );
+
+      var response = await request.send();
+
+      var responseData = await response.stream.bytesToString();
+
+      if (response.statusCode == 200) {
+        var jsonData = jsonDecode(responseData);
+
+        String secureUrl = jsonData['secure_url'];
+
+        setState(() {
+          imageUrl = secureUrl;
+          imageUploading = false;
+        });
+
+        print("Upload Success: $secureUrl");
+      } else {
+        print("Upload Failed: $responseData");
+
+        setState(() {
+          imageUploading = false;
+        });
+      }
+    } catch (e) {
+      print("Upload Error: $e");
+
+      setState(() {
+        imageUploading = false;
+      });
     }
   }
 }
