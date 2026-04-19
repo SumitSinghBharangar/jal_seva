@@ -13,6 +13,7 @@
 // import 'package:jal_seva/common/buttons/dynamic_button.dart';
 // import 'package:jal_seva/common/buttons/scale_button.dart';
 // import 'package:jal_seva/common/constants/app_collections.dart';
+// import 'package:jal_seva/common/enum.dart';
 // import 'package:jal_seva/common/models/address_model.dart';
 // import 'package:jal_seva/features/auth/services/auth_services.dart';
 // import 'package:jal_seva/features/profile/screens/saved_address.dart';
@@ -56,8 +57,8 @@
 //   DateTime? startDate;
 //   DateTime? endDate;
 //   List<DateTime> alternateDates = [];
-//   // final ValueNotifier<PaymentMethod> selectedPaymentMethod =
-//   //     ValueNotifier<PaymentMethod>(PaymentMethod.gibiliWallet);
+//   final ValueNotifier<PaymentMethod> selectedPaymentMethod =
+//       ValueNotifier<PaymentMethod>(PaymentMethod.jalSevaWallet);
 
 //   fetchAddress() async {
 //     var r = await addressesCollection.doc(addressId).get();
@@ -887,7 +888,7 @@
 //                                       color: AppColors.appDarkColor,
 //                                     ),
 //                                   ),
-//                                   value: PaymentMethod.gibiliWallet,
+//                                   value: PaymentMethod.jalSevaWallet,
 //                                   groupValue: value,
 //                                   onChanged: (PaymentMethod? newValue) {
 //                                     selectedPaymentMethod.value = newValue!;
