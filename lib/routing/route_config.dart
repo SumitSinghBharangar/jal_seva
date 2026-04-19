@@ -11,10 +11,15 @@ import 'package:jal_seva/features/home/root/root_screen.dart';
 import 'package:jal_seva/features/home/screen/home_screen.dart';
 import 'package:jal_seva/features/order/screens/new_order_screen.dart';
 import 'package:jal_seva/features/order/screens/order_screen.dart';
+import 'package:jal_seva/features/profile/screens/about_screen.dart';
+import 'package:jal_seva/features/profile/screens/address_added_screen.dart';
+import 'package:jal_seva/features/profile/screens/feedback_form_screen.dart';
+import 'package:jal_seva/features/profile/screens/help_support_screen.dart';
 import 'package:jal_seva/features/profile/screens/new_address_screen.dart';
 import 'package:jal_seva/features/profile/screens/profile_edit_screen.dart';
 import 'package:jal_seva/features/profile/screens/profile_screen.dart';
 import 'package:jal_seva/features/profile/screens/saved_address.dart';
+
 import 'package:jal_seva/routing/routes.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -91,18 +96,15 @@ final router = GoRouter(
         return const CupertinoPage(child: NewAddressScreen());
       },
     ),
-    // GoRoute(
-    // parentNavigatorKey: _rootNavigatorKey,
-    // GoRoute(
-    //   parentNavigatorKey: _rootNavigatorKey,
-    //   path: Routes.addressAdded.path,
-    //   name: Routes.addressAdded.name,
-    //   pageBuilder: (context, state) {
-    //     return const CupertinoPage(
-    //       child: AddressAddedScreen(),
-    //     );
-    //   },
-    // ),
+
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: Routes.addressAdded.path,
+      name: Routes.addressAdded.name,
+      pageBuilder: (context, state) {
+        return const CupertinoPage(child: AddressAddedScreen());
+      },
+    ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: Routes.newOrder.path,
@@ -242,26 +244,22 @@ final router = GoRouter(
     //     );
     //   },
     // ),
-    // GoRoute(
-    //   parentNavigatorKey: _rootNavigatorKey,
-    //   path: Routes.helpSupportScreen.path,
-    //   name: Routes.helpSupportScreen.name,
-    //   pageBuilder: (context, state) {
-    //     return const CupertinoPage(
-    //       child: HelpSupportScreen(),
-    //     );
-    //   },
-    // ),
-    // GoRoute(
-    //   parentNavigatorKey: _rootNavigatorKey,
-    //   path: Routes.feedbackFormScreen.path,
-    //   name: Routes.feedbackFormScreen.name,
-    //   pageBuilder: (context, state) {
-    //     return const CupertinoPage(
-    //       child: FeedbackFormScreen(),
-    //     );
-    //   },
-    // ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: Routes.helpSupportScreen.path,
+      name: Routes.helpSupportScreen.name,
+      pageBuilder: (context, state) {
+        return const CupertinoPage(child: HelpSupportScreen());
+      },
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: Routes.feedbackFormScreen.path,
+      name: Routes.feedbackFormScreen.name,
+      pageBuilder: (context, state) {
+        return const CupertinoPage(child: FeedbackFormScreen());
+      },
+    ),
     // GoRoute(
     //   parentNavigatorKey: _rootNavigatorKey,
     //   path: Routes.topupScreen.path,
@@ -272,16 +270,14 @@ final router = GoRouter(
     //     );
     //   },
     // ),
-    // GoRoute(
-    //   parentNavigatorKey: _rootNavigatorKey,
-    //   path: Routes.aboutScreen.path,
-    //   name: Routes.aboutScreen.name,
-    //   pageBuilder: (context, state) {
-    //     return const CupertinoPage(
-    //       child: AboutScreen(),
-    //     );
-    //   },
-    // ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: Routes.aboutScreen.path,
+      name: Routes.aboutScreen.name,
+      pageBuilder: (context, state) {
+        return const CupertinoPage(child: AboutScreen());
+      },
+    ),
     // GoRoute(
     //   parentNavigatorKey: _rootNavigatorKey,
     //   path: Routes.emptySubscriptionScreen.path,
