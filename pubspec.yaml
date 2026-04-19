@@ -60,6 +60,8 @@ dependencies:
   google_maps_flutter: ^2.15.0
   dotted_border: ^3.1.0
   syncfusion_flutter_datepicker: ^32.2.9
+  shimmer: ^3.0.0
+  carousel_slider: ^5.1.2
 
 dev_dependencies:
   flutter_test:
