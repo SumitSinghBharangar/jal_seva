@@ -21,6 +21,7 @@ import 'package:jal_seva/features/profile/screens/profile_edit_screen.dart';
 import 'package:jal_seva/features/profile/screens/profile_screen.dart';
 import 'package:jal_seva/features/profile/screens/saved_address.dart';
 import 'package:jal_seva/features/subscription/screens/empty_suscription_screen.dart';
+import 'package:jal_seva/features/subscription/screens/new_subscription_screen.dart';
 
 import 'package:jal_seva/routing/routes.dart';
 

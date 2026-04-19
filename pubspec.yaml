@@ -59,6 +59,7 @@ dependencies:
   flutter_iconly: ^1.0.2
   google_maps_flutter: ^2.15.0
   dotted_border: ^3.1.0
+  syncfusion_flutter_datepicker: ^32.2.9
 
 dev_dependencies:
   flutter_test:
