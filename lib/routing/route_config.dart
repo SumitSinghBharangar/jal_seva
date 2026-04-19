@@ -20,6 +20,7 @@ import 'package:jal_seva/features/profile/screens/new_address_screen.dart';
 import 'package:jal_seva/features/profile/screens/profile_edit_screen.dart';
 import 'package:jal_seva/features/profile/screens/profile_screen.dart';
 import 'package:jal_seva/features/profile/screens/saved_address.dart';
+import 'package:jal_seva/features/subscription/screens/empty_suscription_screen.dart';
 
 import 'package:jal_seva/routing/routes.dart';
 
@@ -277,16 +278,14 @@ final router = GoRouter(
         return const CupertinoPage(child: AboutScreen());
       },
     ),
-    // GoRoute(
-    //   parentNavigatorKey: _rootNavigatorKey,
-    //   path: Routes.emptySubscriptionScreen.path,
-    //   name: Routes.emptySubscriptionScreen.name,
-    //   pageBuilder: (context, state) {
-    //     return const CupertinoPage(
-    //       child: EmptySubscriptionScreen(),
-    //     );
-    //   },
-    // ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: Routes.emptySubscriptionScreen.path,
+      name: Routes.emptySubscriptionScreen.name,
+      pageBuilder: (context, state) {
+        return const CupertinoPage(child: EmptySubscriptionScreen());
+      },
+    ),
 
     // GoRoute(
     //   parentNavigatorKey: _rootNavigatorKey,
