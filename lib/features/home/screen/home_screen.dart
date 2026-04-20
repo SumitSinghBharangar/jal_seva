@@ -28,7 +28,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchUser();
-      
 
       // var p = Provider.of<AuthServices>(context, listen: false);
       // addressId = p.primaryAdress;

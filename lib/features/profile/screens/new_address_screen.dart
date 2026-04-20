@@ -1,7 +1,7 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -12,6 +12,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jal_seva/common/app_colors.dart';
@@ -61,7 +62,7 @@ class _SavedAddressState extends State<NewAddressScreen> {
   @override
   void initState() {
     super.initState();
-    // _getUserLocation(); //get location when the user want to set loaction by using the current loacation
+    _getUserLocation(); //get location when the user want to set loaction by using the current loacation
   }
 
   Future<void> _getUserLocation() async {
@@ -258,37 +259,37 @@ class _SavedAddressState extends State<NewAddressScreen> {
                   SizedBox(
                     height: 300,
                     width: double.infinity,
-                    child: GoogleMap(
-                      gestureRecognizers: {
-                        Factory<OneSequenceGestureRecognizer>(
-                          () => EagerGestureRecognizer(),
-                        ),
-                      },
-                      initialCameraPosition: CameraPosition(
-                        target: _initialPosition,
-                        zoom: 2.0,
-                      ),
-                      // onCameraMove: _onCameraMove,
-                      mapToolbarEnabled: false,
-                      myLocationButtonEnabled: false,
-                      onMapCreated: (controller) {
-                        _controller = controller;
-                        _controller?.animateCamera(
-                          CameraUpdate.newLatLng(_pickedLocation),
-                        );
-                      },
-                      onTap: (argument) {
-                        _pickedLocation = argument;
-                        getName();
-                        _locationMarker = _createMarker(argument);
-                        setState(() {});
-                      },
+                    // child: GoogleMap(
+                    //   gestureRecognizers: {
+                    //     Factory<OneSequenceGestureRecognizer>(
+                    //       () => EagerGestureRecognizer(),
+                    //     ),
+                    //   },
+                    //   initialCameraPosition: CameraPosition(
+                    //     target: _initialPosition,
+                    //     zoom: 2.0,
+                    //   ),
+                    //   // onCameraMove: _onCameraMove,
+                    //   mapToolbarEnabled: false,
+                    //   myLocationButtonEnabled: false,
+                    //   onMapCreated: (controller) {
+                    //     _controller = controller;
+                    //     _controller?.animateCamera(
+                    //       CameraUpdate.newLatLng(_pickedLocation),
+                    //     );
+                    //   },
+                    //   onTap: (argument) {
+                    //     _pickedLocation = argument;
+                    //     getName();
+                    //     _locationMarker = _createMarker(argument);
+                    //     setState(() {});
+                    //   },
 
-                      markers: _locationMarker != null
-                          ? {_locationMarker!}
-                          : {},
-                      myLocationEnabled: true,
-                    ),
+                    //   markers: _locationMarker != null
+                    //       ? {_locationMarker!}
+                    //       : {},
+                    //   myLocationEnabled: true,
+                    // ),
                   ),
 
                   Padding(
@@ -549,21 +550,40 @@ class _SavedAddressState extends State<NewAddressScreen> {
                               String uid =
                                   FirebaseAuth.instance.currentUser!.uid;
 
-                              var storageRef = FirebaseStorage.instance
-                                  .ref(uid)
-                                  .child('pipeImages')
-                                  .child(ref.id);
                               if (pickedFile != null) {
-                                var data = await pickedFile!.readAsBytes();
+                                final cloudName = "dt5tyb0ym";
 
-                                await storageRef.putData(data).whenComplete(
-                                  () async {
-                                    imgUrl = await storageRef.getDownloadURL();
-                                  },
+                                final url = Uri.parse(
+                                  "https://api.cloudinary.com/v1_1/$cloudName/image/upload",
                                 );
 
-                                imgUrl = await storageRef.getDownloadURL();
+                                var request = http.MultipartRequest(
+                                  "POST",
+                                  url,
+                                );
+                                request.fields['upload_preset'] = "Jal_Seva";
+                                request.files.add(
+                                  await http.MultipartFile.fromPath(
+                                    "file",
+                                    pickedFile!.path,
+                                  ),
+                                );
+
+                                var response = await request.send();
+                                var responseData = await response.stream
+                                    .bytesToString();
+
+                                if (response.statusCode == 200) {
+                                  var jsonData = jsonDecode(responseData);
+                                  imgUrl = jsonData['secure_url'];
+                                  print("Upload Success: $imgUrl");
+                                } else {
+                                  print("Upload Failed: $responseData");
+                                }
                               }
+                              await FirebaseAuth.instance.currentUser
+                                  ?.updatePhotoURL(imgUrl);
+                              await FirebaseAuth.instance.currentUser?.reload();
 
                               AddressModel model = AddressModel(
                                 id: ref.id,

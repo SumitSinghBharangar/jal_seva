@@ -2,9 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:geoflutterfire2/geoflutterfire2.dart';
-
-final geo = GeoFlutterFire();
 
 class AddressModel {
   String id;
@@ -53,15 +50,13 @@ class AddressModel {
       'appartment': appartment,
       'landmark': landmark,
       'geo': GeoPoint(lat.toDouble(), lng.toDouble()),
-      'point': geo
-          .point(latitude: lat.toDouble(), longitude: lng.toDouble())
-          .data,
+      'latitude': lat.toDouble(), // for geo queries
+      'longitude': lng.toDouble(), // for geo queries
       'pipeImage': pipeImage,
     };
   }
 
   factory AddressModel.fromMap(Map<String, dynamic> map) {
-    // log(map.toString());
     log((map['geo'] as GeoPoint).latitude.toString());
     return AddressModel(
       id: map['id'] as String,
@@ -74,8 +69,6 @@ class AddressModel {
       pincode: map['pincode'] as num? ?? 0,
       appartment: map['appartment'] as String? ?? "",
       landmark: map['landmark'] as String? ?? "",
-      // lat: map['lat'] as num,
-      // lng: map['lng'] as num,
       lat: (map['geo'] as GeoPoint).latitude,
       lng: (map['geo'] as GeoPoint).longitude,
       pipeImage: map['pipeImage'] as String?,

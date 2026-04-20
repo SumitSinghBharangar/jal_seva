@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:jal_seva/common/enum.dart';
 import 'package:jal_seva/features/profile/screens/saved_address.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
@@ -29,8 +30,8 @@ class NewOrderScreen extends StatefulWidget {
 class _NewOrderScreenState extends State<NewOrderScreen> {
   String? addressId;
 
-  // final ValueNotifier<PaymentMethod> selectedPaymentMethod =
-  //     ValueNotifier<PaymentMethod>(PaymentMethod.gibiliWallet);
+  final ValueNotifier<PaymentMethod> selectedPaymentMethod =
+      ValueNotifier<PaymentMethod>(PaymentMethod.jalSevaWallet);
 
   @override
   void initState() {
@@ -194,7 +195,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                         text: "Express Charge",
                         children: const [
                           TextSpan(
-                            text: " : 5 SAR",
+                            text: " : 50",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
