@@ -4,6 +4,7 @@ import 'package:jal_seva/common/enum.dart';
 import 'package:jal_seva/features/order/model/order_model.dart';
 import 'package:jal_seva/features/profile/screens/saved_address.dart';
 import 'package:jal_seva/utils.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -36,6 +37,8 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   final ValueNotifier<PaymentMethod> selectedPaymentMethod =
       ValueNotifier<PaymentMethod>(PaymentMethod.jalSevaWallet);
 
+  late Razorpay _razorpay;
+
   @override
   void initState() {
     super.initState();
@@ -44,6 +47,18 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
       addressId = p.primaryAdress;
       fetchAddress();
     });
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
+
+  @override
+  void dispose() {
+    _razorpay.clear();
+    addressTypeNotifier.dispose();
+    quantityNotifier.dispose();
+    super.dispose();
   }
 
   ValueNotifier<bool?> addressTypeNotifier = ValueNotifier<bool?>(null);
@@ -51,6 +66,30 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
   AddressModel? _addressModel;
   bool isPaid = false;
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    print("Payment Success: ${response.paymentId}");
+    Fluttertoast.showToast(msg: "Payment Successful!");
+
+    // TODO: Save payment info to Firestore here
+    // FirebaseFirestore.instance.collection('payments').add({
+    //   'paymentId': response.paymentId,
+    //   'orderId': response.orderId,
+    //   'uid': FirebaseAuth.instance.currentUser!.uid,
+    //   'amount': amount,
+    //   'paidAt': FieldValue.serverTimestamp(),
+    // });
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    print("Payment Error: ${response.code} - ${response.message}");
+    Fluttertoast.showToast(msg: "Payment Failed: ${response.message}");
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    print("External Wallet: ${response.walletName}");
+    Fluttertoast.showToast(msg: "Wallet Selected: ${response.walletName}");
+  }
 
   fetchAddress() async {
     var r = await addressesCollection.doc(addressId).get();
@@ -119,13 +158,6 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   //   if (result is NetworkError) {}
   //   if (result is UnspecifiedError) {}
   // }
-
-  @override
-  void dispose() {
-    addressTypeNotifier.dispose();
-    quantityNotifier.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -734,32 +766,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 10.h),
-                            if (Platform.isIOS)
-                              Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey),
-                                ),
-                                child: Material(
-                                  child: RadioListTile<PaymentMethod>(
-                                    title: Text(
-                                      "Apple Pay",
-                                      style: TextStyle(
-                                        fontSize: 17.sp,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    value: PaymentMethod.applePay,
-                                    groupValue: value,
-                                    activeColor: Colors.green,
-                                    onChanged: (PaymentMethod? newValue) {
-                                      selectedPaymentMethod.value = newValue!;
-                                    },
-                                    controlAffinity: ListTileControlAffinity
-                                        .trailing, // Place radio button at trailing
-                                  ),
-                                ),
-                              ),
+
                             SizedBox(height: 10.h),
                             Container(
                               decoration: BoxDecoration(
@@ -768,7 +775,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                               child: Material(
                                 child: RadioListTile<PaymentMethod>(
                                   title: Text(
-                                    "Card Payment",
+                                    "Card, UPI, Netbanking & more",
                                     style: TextStyle(
                                       fontSize: 17.sp,
                                       color: Colors.black,
@@ -816,12 +823,12 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                             isClosed: false,
                             driverId: "",
                           );
-                          // final paymentconfig = PaymentConfig(
-                          //   publishableApiKey:
-                          //       "pk_test_r6eZg85QyduWZ7PNTHT56BFvZpxJgNJ2PqPMDoXA",
-                          //   amount: total.toInt() * 100,
-                          //   description: ref.id,
-                          // );
+
+                          if (context.mounted) {
+                            context.pop();
+
+                            _openRazorpay(total);
+                          }
 
                           // if (context.mounted) {
                           //   if (selectedPaymentMethod.value ==
@@ -984,5 +991,25 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         );
       },
     );
+  }
+
+  void _openRazorpay(num amount) {
+    var options = {
+      'key': 'rzp_test_0JYAov6Cmnw2l4',
+      'amount': (amount * 100).toInt(),
+      'name': 'Jal-Seva',
+      'description': 'Payment for your service',
+      'prefill': {
+        'contact': FirebaseAuth.instance.currentUser?.phoneNumber ?? '',
+        'email': FirebaseAuth.instance.currentUser?.email ?? '',
+      },
+      'theme': {'color': '#3399cc'},
+    };
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      print("Razorpay Error: $e");
+      Fluttertoast.showToast(msg: "Something went wrong!");
+    }
   }
 }
