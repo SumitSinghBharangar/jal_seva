@@ -1,6 +1,9 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:jal_seva/common/enum.dart';
+import 'package:jal_seva/features/order/model/order_model.dart';
 import 'package:jal_seva/features/profile/screens/saved_address.dart';
+import 'package:jal_seva/utils.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -153,7 +156,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                         text: "Vehicle Capacity",
                         children: [
                           TextSpan(
-                            text: " : ${(q) * 10} ${"sq m"}",
+                            text: " : ${(q) * 100} ${"Litres"}",
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -176,7 +179,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                 text: "Service Charge",
                 children: const [
                   TextSpan(
-                    text: " : 2.33 SAR",
+                    text: " : ₹ 100 ",
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -195,7 +198,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                         text: "Express Charge",
                         children: const [
                           TextSpan(
-                            text: " : 50",
+                            text: " : ₹ 50",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -216,7 +219,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
             ValueListenableBuilder(
               valueListenable: quantityNotifier,
               builder: (context, q, _) {
-                bool value = (q) > 0;
+                bool value = (q) > 100;
                 return AnimatedCrossFade(
                   firstChild: const SizedBox(width: double.infinity),
                   secondChild: SizedBox(
@@ -226,7 +229,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                         text: "Charge",
                         children: [
                           TextSpan(
-                            text: " : ${(q) * 5} SAR",
+                            text: " : ₹ ${(q) * 50}",
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -259,12 +262,15 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                             valueListenable: quantityNotifier,
                             builder: (context, quantity, _) {
                               var amount =
-                                  (quantity * 5) +
-                                  (type == true ? 5 : 0) +
-                                  2.33;
+                                  (quantity * 50) +
+                                  (type == true ? 50 : 0) +
+                                  100;
+                              if (quantity == 0) {
+                                amount = 0;
+                              }
 
                               return Text(
-                                "$amount SAR",
+                                " ₹ $amount",
                                 // "${((quantity) * 5) + (type == true ? 5 : 0) + 2.33}\$",
                                 style: const TextStyle(
                                   fontSize: 28,
@@ -294,7 +300,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                         return;
                       }
 
-                      // _showPaymentModel();
+                      _showPaymentModel();
                     },
                   ),
                 ),
@@ -663,337 +669,320 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
     );
   }
 
-  // _showPaymentModel() async {
-  //   showCupertinoModalPopup(
-  //     context: context,
-  //     builder: (context) {
-  //       return GestureDetector(
-  //         onVerticalDragEnd: (details) {
-  //           if (details.primaryVelocity != null &&
-  //               details.primaryVelocity! > 0) {
-  //             Navigator.pop(context);
-  //           }
-  //         },
-  //         child: ClipRRect(
-  //           borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-  //           child: Container(
-  //             height: MediaQuery.sizeOf(context).height * .40,
-  //             decoration: const BoxDecoration(
-  //               color: Colors.white,
-  //               borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-  //             ),
-  //             child: Padding(
-  //               padding: EdgeInsets.symmetric(horizontal: 20.w),
-  //               child: Column(
-  //                 children: [
-  //                   SizedBox(height: 15.h),
-  //                   Center(
-  //                     child: Container(
-  //                       height: 5.h,
-  //                       width: 30.w,
-  //                       decoration: BoxDecoration(
-  //                         color: Colors.grey,
-  //                         borderRadius: BorderRadius.circular(20),
-  //                       ),
-  //                     ),
-  //                   ),
-  //                   SizedBox(height: 20.h),
+  _showPaymentModel() async {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) {
+        return GestureDetector(
+          onVerticalDragEnd: (details) {
+            if (details.primaryVelocity != null &&
+                details.primaryVelocity! > 0) {
+              Navigator.pop(context);
+            }
+          },
+          child: ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+            child: Container(
+              height: MediaQuery.sizeOf(context).height * .40,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Column(
+                  children: [
+                    SizedBox(height: 15.h),
+                    Center(
+                      child: Container(
+                        height: 5.h,
+                        width: 30.w,
+                        decoration: BoxDecoration(
+                          color: Colors.grey,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20.h),
 
-  //                   ValueListenableBuilder<PaymentMethod>(
-  //                     valueListenable: selectedPaymentMethod,
-  //                     builder: (context, value, child) {
-  //                       return Column(
-  //                         children: [
-  //                           Container(
-  //                             decoration: BoxDecoration(
-  //                               border: Border.all(color: Colors.grey),
-  //                             ),
-  //                             child: Material(
-  //                               child: RadioListTile<PaymentMethod>(
-  //                                 title: Text(
-  //                                   "Gibili Wallet",
-  //                                   style: TextStyle(
-  //                                     fontSize: 17.sp,
-  //                                     color: Colors.black,
-  //                                   ),
-  //                                 ),
-  //                                 subtitle: Text(
-  //                                   "View Balance",
-  //                                   style: TextStyle(
-  //                                     color: AppColors.appDarkColor,
-  //                                   ),
-  //                                 ),
-  //                                 value: PaymentMethod.gibiliWallet,
-  //                                 groupValue: value,
-  //                                 onChanged: (PaymentMethod? newValue) {
-  //                                   selectedPaymentMethod.value = newValue!;
-  //                                 },
-  //                                 controlAffinity: ListTileControlAffinity
-  //                                     .trailing, // Place radio button at trailing
-  //                               ),
-  //                             ),
-  //                           ),
-  //                           SizedBox(height: 10.h),
-  //                           if (Platform.isIOS)
-  //                             Container(
-  //                               decoration: BoxDecoration(
-  //                                 border: Border.all(color: Colors.grey),
-  //                               ),
-  //                               child: Material(
-  //                                 child: RadioListTile<PaymentMethod>(
-  //                                   title: Text(
-  //                                     l?.applePay ?? "Apple Pay",
-  //                                     style: TextStyle(
-  //                                       fontSize: 17.sp,
-  //                                       color: Colors.black,
-  //                                     ),
-  //                                   ),
-  //                                   value: PaymentMethod.applePay,
-  //                                   groupValue: value,
-  //                                   activeColor: Colors.green,
-  //                                   onChanged: (PaymentMethod? newValue) {
-  //                                     selectedPaymentMethod.value = newValue!;
-  //                                   },
-  //                                   controlAffinity: ListTileControlAffinity
-  //                                       .trailing, // Place radio button at trailing
-  //                                 ),
-  //                               ),
-  //                             ),
-  //                           SizedBox(height: 10.h),
-  //                           Container(
-  //                             decoration: BoxDecoration(
-  //                               border: Border.all(color: Colors.grey),
-  //                             ),
-  //                             child: Material(
-  //                               child: RadioListTile<PaymentMethod>(
-  //                                 title: Text(
-  //                                   l?.cardPayment ?? "Card Payment",
-  //                                   style: TextStyle(
-  //                                     fontSize: 17.sp,
-  //                                     color: Colors.black,
-  //                                   ),
-  //                                 ),
-  //                                 value: PaymentMethod.cardPayment,
-  //                                 groupValue: value,
-  //                                 activeColor: Colors.green,
-  //                                 onChanged: (PaymentMethod? newValue) {
-  //                                   selectedPaymentMethod.value = newValue!;
-  //                                 },
-  //                                 controlAffinity: ListTileControlAffinity
-  //                                     .trailing, // Place radio button at trailing
-  //                               ),
-  //                             ),
-  //                           ),
-  //                         ],
-  //                       );
-  //                     },
-  //                   ),
-  //                   SizedBox(height: 20.h),
-  //                   Material(
-  //                     child: DynamicButton.fromText(
-  //                       text: l?.makePayment ?? "Make Payment",
-  //                       onPressed: () async {
-  //                         // showLoading(context);
+                    ValueListenableBuilder<PaymentMethod>(
+                      valueListenable: selectedPaymentMethod,
+                      builder: (context, value, child) {
+                        return Column(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey),
+                              ),
+                              child: Material(
+                                child: RadioListTile<PaymentMethod>(
+                                  title: Text(
+                                    "Jal-Seva Wallet",
+                                    style: TextStyle(
+                                      fontSize: 17.sp,
+                                      color: Colors.black,
+                                    ),
+                                  ),
 
-  //                         var ref = ordersCollection.doc();
-  //                         String uid = FirebaseAuth.instance.currentUser!.uid;
+                                  value: PaymentMethod.jalSevaWallet,
+                                  groupValue: value,
+                                  onChanged: (PaymentMethod? newValue) {
+                                    selectedPaymentMethod.value = newValue!;
+                                  },
+                                  controlAffinity: ListTileControlAffinity
+                                      .trailing, // Place radio button at trailing
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 10.h),
+                            if (Platform.isIOS)
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey),
+                                ),
+                                child: Material(
+                                  child: RadioListTile<PaymentMethod>(
+                                    title: Text(
+                                      "Apple Pay",
+                                      style: TextStyle(
+                                        fontSize: 17.sp,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    value: PaymentMethod.applePay,
+                                    groupValue: value,
+                                    activeColor: Colors.green,
+                                    onChanged: (PaymentMethod? newValue) {
+                                      selectedPaymentMethod.value = newValue!;
+                                    },
+                                    controlAffinity: ListTileControlAffinity
+                                        .trailing, // Place radio button at trailing
+                                  ),
+                                ),
+                              ),
+                            SizedBox(height: 10.h),
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey),
+                              ),
+                              child: Material(
+                                child: RadioListTile<PaymentMethod>(
+                                  title: Text(
+                                    "Card Payment",
+                                    style: TextStyle(
+                                      fontSize: 17.sp,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  value: PaymentMethod.cardPayment,
+                                  groupValue: value,
+                                  activeColor: Colors.green,
+                                  onChanged: (PaymentMethod? newValue) {
+                                    selectedPaymentMethod.value = newValue!;
+                                  },
+                                  controlAffinity: ListTileControlAffinity
+                                      .trailing, // Place radio button at trailing
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                    SizedBox(height: 20.h),
+                    Material(
+                      child: DynamicButton.fromText(
+                        text: "Make Payment",
+                        onPressed: () async {
+                          // showLoading(context);
 
-  //                         var total =
-  //                             ((quantityNotifier.value) * 5) +
-  //                             (addressTypeNotifier.value == true ? 5 : 0) +
-  //                             2.33;
+                          var ref = ordersCollection.doc();
+                          String uid = FirebaseAuth.instance.currentUser!.uid;
 
-  //                         OrderModel order = OrderModel(
-  //                           status: OrderStatus.pending,
-  //                           id: ref.id,
-  //                           address: _addressModel!,
-  //                           isExpressDelivery: addressTypeNotifier.value!,
-  //                           quantity: quantityNotifier.value,
-  //                           totalCharge: total,
-  //                           createdAt: DateTime.now(),
-  //                           uid: uid,
-  //                           isClosed: false,
-  //                           driverId: "",
-  //                         );
-  //                         final paymentconfig = PaymentConfig(
-  //                           publishableApiKey:
-  //                               "pk_test_r6eZg85QyduWZ7PNTHT56BFvZpxJgNJ2PqPMDoXA",
-  //                           amount: total.toInt() * 100,
-  //                           description: ref.id,
-  //                         );
+                          var total =
+                              ((quantityNotifier.value) * 100) +
+                              (addressTypeNotifier.value == true ? 50 : 0) +
+                              100;
 
-  //                         if (context.mounted) {
-  //                           if (selectedPaymentMethod.value ==
-  //                               PaymentMethod.cardPayment) {
-  //                             Navigator.push(
-  //                               context,
-  //                               CupertinoPageRoute(
-  //                                 builder: (context) => CardPaymentScreen(
-  //                                   paymentConfig: paymentconfig,
-  //                                   onPaymentResult: (result) async {
-  //                                     if (result is PaymentResponse) {
-  //                                       Fluttertoast.showToast(
-  //                                         msg: result.status.name,
-  //                                       );
-  //                                       switch (result.status) {
-  //                                         case PaymentStatus.paid:
-  //                                           await ref.set(order.toMap());
-  //                                           Fluttertoast.showToast(
-  //                                             msg: "Order Placed successfully",
-  //                                           );
-  //                                           context.push(
-  //                                             Routes.orderPlaced.path,
-  //                                           );
-  //                                           break;
-  //                                         case PaymentStatus.failed:
-  //                                           Fluttertoast.showToast(
-  //                                             msg:
-  //                                                 l?.yourPaymentFailedTryAgain ??
-  //                                                 "Your Payment failed try again",
-  //                                           );
-  //                                           Navigator.pop(context);
-  //                                           break;
-  //                                         case PaymentStatus.authorized:
-  //                                           // handle authorized.
-  //                                           break;
-  //                                         default:
-  //                                       }
-  //                                       return;
-  //                                     }
-  //                                     if (result is ApiError) {}
-  //                                     if (result is AuthError) {}
-  //                                     if (result is ValidationError) {}
-  //                                     if (result is PaymentCanceledError) {}
-  //                                     if (result is UnprocessableTokenError) {}
-  //                                     if (result is TimeoutError) {}
-  //                                     if (result is NetworkError) {}
-  //                                     if (result is UnspecifiedError) {}
-  //                                   },
-  //                                 ),
-  //                               ),
-  //                             );
-  //                           } else if (selectedPaymentMethod.value ==
-  //                               PaymentMethod.applePay) {
-  //                             Navigator.push(
-  //                               context,
-  //                               CupertinoPageRoute(
-  //                                 builder: (context) => ApplepayScreen(
-  //                                   paymentConfig: paymentconfig,
-  //                                   onPaymentResult: (result) async {
-  //                                     if (result is PaymentResponse) {
-  //                                       Fluttertoast.showToast(
-  //                                         msg: result.status.name,
-  //                                       );
-  //                                       switch (result.status) {
-  //                                         case PaymentStatus.paid:
-  //                                           var ref = ordersCollection.doc();
-  //                                           await ref.set(order.toMap());
-  //                                           context.push(
-  //                                             Routes.orderPlaced.path,
-  //                                           );
+                          OrderModel order = OrderModel(
+                            status: OrderStatus.pending,
+                            id: ref.id,
+                            address: _addressModel!,
+                            isExpressDelivery: addressTypeNotifier.value!,
+                            quantity: quantityNotifier.value,
+                            totalCharge: total,
+                            createdAt: DateTime.now(),
+                            uid: uid,
+                            isClosed: false,
+                            driverId: "",
+                          );
+                          // final paymentconfig = PaymentConfig(
+                          //   publishableApiKey:
+                          //       "pk_test_r6eZg85QyduWZ7PNTHT56BFvZpxJgNJ2PqPMDoXA",
+                          //   amount: total.toInt() * 100,
+                          //   description: ref.id,
+                          // );
 
-  //                                           break;
-  //                                         case PaymentStatus.failed:
-  //                                           Fluttertoast.showToast(
-  //                                             msg:
+                          // if (context.mounted) {
+                          //   if (selectedPaymentMethod.value ==
+                          //       PaymentMethod.cardPayment) {
+                          //     Navigator.push(
+                          //       context,
+                          //       CupertinoPageRoute(
+                          //         builder: (context) => CardPaymentScreen(
+                          //           paymentConfig: paymentconfig,
+                          //           onPaymentResult: (result) async {
+                          //             if (result is PaymentResponse) {
+                          //               Fluttertoast.showToast(
+                          //                 msg: result.status.name,
+                          //               );
+                          //               switch (result.status) {
+                          //                 case PaymentStatus.paid:
+                          //                   await ref.set(order.toMap());
+                          //                   Fluttertoast.showToast(
+                          //                     msg: "Order Placed successfully",
+                          //                   );
+                          //                   context.push(
+                          //                     Routes.orderPlaced.path,
+                          //                   );
+                          //                   break;
+                          //                 case PaymentStatus.failed:
+                          //                   Fluttertoast.showToast(
+                          //                     msg:
+                          //                         l?.yourPaymentFailedTryAgain ??
+                          //                         "Your Payment failed try again",
+                          //                   );
+                          //                   Navigator.pop(context);
+                          //                   break;
+                          //                 case PaymentStatus.authorized:
+                          //                   // handle authorized.
+                          //                   break;
+                          //                 default:
+                          //               }
+                          //               return;
+                          //             }
+                          //             if (result is ApiError) {}
+                          //             if (result is AuthError) {}
+                          //             if (result is ValidationError) {}
+                          //             if (result is PaymentCanceledError) {}
+                          //             if (result is UnprocessableTokenError) {}
+                          //             if (result is TimeoutError) {}
+                          //             if (result is NetworkError) {}
+                          //             if (result is UnspecifiedError) {}
+                          //           },
+                          //         ),
+                          //       ),
+                          //     );
+                          //   } else if (selectedPaymentMethod.value ==
+                          //       PaymentMethod.applePay) {
+                          //     Navigator.push(
+                          //       context,
+                          //       CupertinoPageRoute(
+                          //         builder: (context) => ApplepayScreen(
+                          //           paymentConfig: paymentconfig,
+                          //           onPaymentResult: (result) async {
+                          //             if (result is PaymentResponse) {
+                          //               Fluttertoast.showToast(
+                          //                 msg: result.status.name,
+                          //               );
+                          //               switch (result.status) {
+                          //                 case PaymentStatus.paid:
+                          //                   var ref = ordersCollection.doc();
+                          //                   await ref.set(order.toMap());
+                          //                   context.push(
+                          //                     Routes.orderPlaced.path,
+                          //                   );
 
-  //                                                 "Your Payment failed try again",
-  //                                           );
-  //                                           Navigator.pop(context);
-  //                                           break;
-  //                                         case PaymentStatus.authorized:
-  //                                           // handle authorized.
-  //                                           break;
-  //                                         default:
-  //                                       }
-  //                                       return;
-  //                                     }
-  //                                     if (result is ApiError) {}
-  //                                     if (result is AuthError) {}
-  //                                     if (result is ValidationError) {}
-  //                                     if (result is PaymentCanceledError) {}
-  //                                     if (result is UnprocessableTokenError) {}
-  //                                     if (result is TimeoutError) {}
-  //                                     if (result is NetworkError) {}
-  //                                     if (result is UnspecifiedError) {}
-  //                                   },
-  //                                 ),
-  //                               ),
-  //                             );
-  //                           } else {
-  //                             final userRef = users.doc(uid);
-  //                             final snapshot = await userRef.get();
+                          //                   break;
+                          //                 case PaymentStatus.failed:
+                          //                   Fluttertoast.showToast(
+                          //                     msg:
+                          //                         "Your Payment failed try again",
+                          //                   );
+                          //                   Navigator.pop(context);
+                          //                   break;
+                          //                 case PaymentStatus.authorized:
+                          //                   // handle authorized.
+                          //                   break;
+                          //                 default:
+                          //               }
+                          //               return;
+                          //             }
+                          //             if (result is ApiError) {}
+                          //             if (result is AuthError) {}
+                          //             if (result is ValidationError) {}
+                          //             if (result is PaymentCanceledError) {}
+                          //             if (result is UnprocessableTokenError) {}
+                          //             if (result is TimeoutError) {}
+                          //             if (result is NetworkError) {}
+                          //             if (result is UnspecifiedError) {}
+                          //           },
+                          //         ),
+                          //       ),
+                          //     );
+                          //   } else {
+                          //     final userRef = users.doc(uid);
+                          //     final snapshot = await userRef.get();
 
-  //                             if (snapshot.exists) {
-  //                               final data = snapshot.data()!;
-  //                               double balance = double.parse(data["balance"]);
-  //                               if (balance <= total) {
-  //                                 Fluttertoast.showToast(
-  //                                   msg: "Amount not sufficient",
-  //                                 );
-  //                                 return;
-  //                               } else {
-  //                                 try {
-  //                                   showLoading(context);
-  //                                   balance = balance - total;
+                          //     if (snapshot.exists) {
+                          //       final data = snapshot.data()!;
+                          //       double balance = double.parse(data["balance"]);
+                          //       if (balance <= total) {
+                          //         Fluttertoast.showToast(
+                          //           msg: "Amount not sufficient",
+                          //         );
+                          //         return;
+                          //       } else {
+                          //         try {
+                          //           showLoading(context);
+                          //           balance = balance - total;
 
-  //                                   await userRef.update({
-  //                                     "balance": balance.toString(),
-  //                                   });
+                          //           await userRef.update({
+                          //             "balance": balance.toString(),
+                          //           });
 
-  //                                   await ref.set(order.toMap());
-  //                                   if (context.mounted) {
-  //                                     context.pop();
-  //                                     context.go(Routes.orderPlaced.path);
-  //                                   }
+                          //           await ref.set(order.toMap());
+                          //           if (context.mounted) {
+                          //             context.pop();
+                          //             context.go(Routes.orderPlaced.path);
+                          //           }
 
-  //                                   return;
-  //                                 } catch (e) {
-  //                                   log(e.toString());
-  //                                   Fluttertoast.showToast(msg: e.toString());
-  //                                 }
-  //                               }
-  //                             }
-  //                           }
-  //                         }
+                          //           return;
+                          //         } catch (e) {
+                          //           log(e.toString());
+                          //           Fluttertoast.showToast(msg: e.toString());
+                          //         }
+                          //       }
+                          //     }
+                          //   }
+                        },
 
-  //                         // await ref.set(order.toMap());
+                        // await ref.set(order.toMap());
 
-  //                         // if (context.mounted) {
-  //                         //   context.pop();
-  //                         //   Navigator.push(
-  //                         //     context,
-  //                         //     CupertinoPageRoute(
-  //                         //       builder: (context) => PaymentScreen(
-  //                         //         paymentConfig: paymentconfig,
-  //                         //         onPaymentResult: onPaymentResult,
-  //                         //       ),
-  //                         //     ),
-  //                         //   );
-  //                         // context.push(Routes.orderPlaced.path);
-  //                         // }
-  //                       },
-  //                     ),
-  //                   ),
-  //                   SizedBox(height: 10.h),
-
-  //                   // Consumer<LanguageChangeController>(
-  //                   //     builder: (context, languageController, child) {
-  //                   //   return DynamicButton.fromText(
-  //                   //       text: "Set Language",
-  //                   //       onPressed: () {
-  //                   //         languageController.changeLanguage(
-  //                   //             Locale(selectedLanguage.value.toString()));
-  //                   //         Navigator.pop(context);
-  //                   //       });
-  //                   // })
-  //                 ],
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
+                        // if (context.mounted) {
+                        //   context.pop();
+                        //   Navigator.push(
+                        //     context,
+                        //     CupertinoPageRoute(
+                        //       builder: (context) => PaymentScreen(
+                        //         paymentConfig: paymentconfig,
+                        //         onPaymentResult: onPaymentResult,
+                        //       ),
+                        //     ),
+                        //   );
+                        // context.push(Routes.orderPlaced.path);
+                        // }
+                        // },
+                      ),
+                    ),
+                    SizedBox(height: 10.h),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
