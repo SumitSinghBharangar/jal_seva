@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:jal_seva/common/enum.dart';
 import 'package:jal_seva/features/order/model/order_model.dart';
 import 'package:jal_seva/features/profile/screens/saved_address.dart';
+import 'package:jal_seva/features/transections/model/transection_model.dart';
 
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
@@ -38,6 +39,9 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
   late Razorpay _razorpay;
 
+  OrderModel? _pendingOrder;
+  var _pendingRef;
+
   @override
   void initState() {
     super.initState();
@@ -66,21 +70,34 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   AddressModel? _addressModel;
   bool isPaid = false;
 
-  void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    print("Payment Success: ${response.paymentId}");
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    if (_pendingOrder == null || _pendingRef == null) {
+      return;
+    }
+
+    await _pendingRef.set(_pendingOrder!.toMap());
+
+    _pendingOrder = null;
+    _pendingRef = null;
+    Fluttertoast.showToast(msg: "Order Placed Successfully!");
+    var transactionRef = FirebaseFirestore.instance
+        .collection('transactions')
+        .doc();
+    TransactionModel transaction = TransactionModel(
+      id: transactionRef.id,
+      uid: _pendingOrder!.uid,
+      orderId: _pendingOrder!.id,
+      amount: _pendingOrder!.totalCharge,
+      method: TxnPaymentMethod.razorpay, // updated
+      status: TxnPaymentStatus.success, // updated
+      paidAt: DateTime.now(),
+      paymentId: response.paymentId,
+    );
+
+    await transactionRef.set(transaction.toMap());
     if (context.mounted) {
       context.push(Routes.orderPlaced.path);
     }
-    Fluttertoast.showToast(msg: "Payment Successful!");
-
-    // TODO: Save payment info to Firestore here
-    // FirebaseFirestore.instance.collection('payments').add({
-    //   'paymentId': response.paymentId,
-    //   'orderId': response.orderId,
-    //   'uid': FirebaseAuth.instance.currentUser!.uid,
-    //   'amount': amount,
-    //   'paidAt': FieldValue.serverTimestamp(),
-    // });
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
@@ -803,8 +820,6 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                       child: DynamicButton.fromText(
                         text: "Make Payment",
                         onPressed: () async {
-                          // showLoading(context);
-
                           var ref = ordersCollection.doc();
                           String uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -826,11 +841,10 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                             driverId: "",
                           );
 
-                          if (context.mounted) {
-                            context.pop();
+                          _pendingOrder = order;
+                          _pendingRef = ref;
 
-                            _openRazorpay(total);
-                          }
+                          _openRazorpay(total);
 
                           // if (context.mounted) {
                           //   if (selectedPaymentMethod.value ==

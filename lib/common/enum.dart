@@ -1,1 +1,1 @@
-enum PaymentMethod { jalSevaWallet, applePay, cardPayment }
+enum PaymentMethod { jalSevaWallet, applePay, cardPayment, razorpay }
