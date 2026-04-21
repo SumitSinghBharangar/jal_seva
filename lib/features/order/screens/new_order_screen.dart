@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:jal_seva/common/enum.dart';
 import 'package:jal_seva/features/order/model/order_model.dart';
 import 'package:jal_seva/features/profile/screens/saved_address.dart';
-import 'package:jal_seva/features/transections/model/transection_model.dart';
+import 'package:jal_seva/features/wallet/model/transection_model.dart';
 
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';

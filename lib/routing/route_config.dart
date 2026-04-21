@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:go_router/go_router.dart';
@@ -24,6 +25,7 @@ import 'package:jal_seva/features/profile/screens/saved_address.dart';
 import 'package:jal_seva/features/subscription/screens/empty_suscription_screen.dart';
 import 'package:jal_seva/features/subscription/screens/new_subscription_screen.dart';
 import 'package:jal_seva/features/subscription/screens/subscription_screen.dart';
+import 'package:jal_seva/features/wallet/screens/wallet_screen.dart';
 
 import 'package:jal_seva/routing/routes.dart';
 
@@ -322,7 +324,7 @@ final router = GoRouter(
           path: Routes.wallete.path,
           name: Routes.wallete.name,
           pageBuilder: (context, state) {
-            return const NoTransitionPage(child: HomeScreen());
+            return const NoTransitionPage(child: WalletScreen());
           },
         ),
         GoRoute(
@@ -343,11 +345,11 @@ final router = GoRouter(
     ),
   ],
   redirect: (context, state) {
-    // if (state.fullPath == Routes.home.path) {
-    //   if (FirebaseAuth.instance.currentUser?.displayName == null) {
-    //     // return Routes.profileComplete.path;
-    //   }
-    // }
+    if (state.fullPath == Routes.home.path) {
+      if (FirebaseAuth.instance.currentUser?.displayName == null) {
+        // return Routes.profileComplete.path;
+      }
+    }
     return null;
   },
 );
