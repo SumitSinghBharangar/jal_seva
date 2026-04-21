@@ -11,6 +11,7 @@ import 'package:jal_seva/features/chat/chat_screen.dart';
 import 'package:jal_seva/features/home/root/root_screen.dart';
 import 'package:jal_seva/features/home/screen/home_screen.dart';
 import 'package:jal_seva/features/order/screens/new_order_screen.dart';
+import 'package:jal_seva/features/order/screens/order_placed_screen.dart';
 import 'package:jal_seva/features/order/screens/order_screen.dart';
 import 'package:jal_seva/features/profile/screens/about_screen.dart';
 import 'package:jal_seva/features/profile/screens/address_added_screen.dart';
@@ -202,16 +203,14 @@ final router = GoRouter(
         return const CupertinoPage(child: ProfileEditScreen());
       },
     ),
-    // GoRoute(
-    //   parentNavigatorKey: _rootNavigatorKey,
-    //   path: Routes.orderPlaced.path,
-    //   name: Routes.orderPlaced.name,
-    //   pageBuilder: (context, state) {
-    //     return const CupertinoPage(
-    //       child: OrderPlacedScreen(),
-    //     );
-    //   },
-    // ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: Routes.orderPlaced.path,
+      name: Routes.orderPlaced.name,
+      pageBuilder: (context, state) {
+        return const CupertinoPage(child: OrderPlacedScreen());
+      },
+    ),
     // GoRoute(
     //   parentNavigatorKey: _rootNavigatorKey,
     //   path: Routes.rateOrder.path,

@@ -1,9 +1,8 @@
-import 'dart:io';
 import 'dart:ui';
 import 'package:jal_seva/common/enum.dart';
 import 'package:jal_seva/features/order/model/order_model.dart';
 import 'package:jal_seva/features/profile/screens/saved_address.dart';
-import 'package:jal_seva/utils.dart';
+
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
@@ -69,6 +68,9 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
     print("Payment Success: ${response.paymentId}");
+    if (context.mounted) {
+      context.push(Routes.orderPlaced.path);
+    }
     Fluttertoast.showToast(msg: "Payment Successful!");
 
     // TODO: Save payment info to Firestore here
@@ -251,7 +253,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
             ValueListenableBuilder(
               valueListenable: quantityNotifier,
               builder: (context, q, _) {
-                bool value = (q) > 100;
+                bool value = (q) > 0;
                 return AnimatedCrossFade(
                   firstChild: const SizedBox(width: double.infinity),
                   secondChild: SizedBox(
@@ -807,7 +809,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                           String uid = FirebaseAuth.instance.currentUser!.uid;
 
                           var total =
-                              ((quantityNotifier.value) * 100) +
+                              ((quantityNotifier.value) * 50) +
                               (addressTypeNotifier.value == true ? 50 : 0) +
                               100;
 
