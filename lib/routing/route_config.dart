@@ -11,7 +11,7 @@ import 'package:jal_seva/features/auth/screens/term_use_screen.dart';
 import 'package:jal_seva/features/chat/chat_screen.dart';
 import 'package:jal_seva/features/home/root/root_screen.dart';
 import 'package:jal_seva/features/home/screen/home_screen.dart';
-import 'package:jal_seva/features/notification/notification_screen.dart';
+import 'package:jal_seva/features/notification/screens/notification_screen.dart';
 import 'package:jal_seva/features/order/screens/new_order_screen.dart';
 import 'package:jal_seva/features/order/screens/order_placed_screen.dart';
 import 'package:jal_seva/features/order/screens/order_screen.dart';
@@ -163,16 +163,7 @@ final router = GoRouter(
         return const CupertinoPage(child: NotificationScreen());
       },
     ),
-    // GoRoute(
-    //   parentNavigatorKey: _rootNavigatorKey,
-    //   path: Routes.languageScreen.path,
-    //   name: Routes.languageScreen.name,
-    //   pageBuilder: (context, state) {
-    //     return const CupertinoPage(
-    //       child: ChangeLanguageScreen(),
-    //     );
-    //   },
-    // ),
+
     // GoRoute(
     //   parentNavigatorKey: _rootNavigatorKey,
     //   path: Routes.viewStatusScreen.path,
@@ -346,7 +337,7 @@ final router = GoRouter(
   redirect: (context, state) {
     if (state.fullPath == Routes.home.path) {
       if (FirebaseAuth.instance.currentUser?.displayName == null) {
-        // return Routes.profileComplete.path;
+        return Routes.profileComplete.path;
       }
     }
     return null;
