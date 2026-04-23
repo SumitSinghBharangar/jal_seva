@@ -12,8 +12,6 @@ CollectionReference<Map<String, dynamic>> drivers = _store.collection(
   'drivers',
 );
 
-
-
 CollectionReference<Map<String, dynamic>> get userAddresses =>
     users.doc(FirebaseAuth.instance.currentUser!.uid).collection('addresses');
 
@@ -27,6 +25,5 @@ CollectionReference<Map<String, dynamic>> ordersCollection = _store.collection(
 CollectionReference<Map<String, dynamic>> subscriptionsCollection = _store
     .collection('subscriptions');
 
-CollectionReference<Map<String, dynamic>> balanceCollection = _store.collection(
-  'balance',
-);
+CollectionReference<Map<String, dynamic>> notificationsCollection = _store
+    .collection('notifications');
