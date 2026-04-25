@@ -1,4 +1,3 @@
-
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -26,16 +25,12 @@ class _UpcommingOrdersState extends State<UpcommingOrders> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 22.w),
       child: FirestoreListView.separated(
         separatorBuilder: (context, index) => SizedBox(height: 10.h),
         query: ordersCollection
-            .where(
-              'uid',
-              isEqualTo: FirebaseAuth.instance.currentUser!.uid,
-            )
+            .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
             .where('isClosed', isEqualTo: false)
             .orderBy('createdAt', descending: true),
         emptyBuilder: (context) => _emptyState(context),
@@ -49,7 +44,6 @@ class _UpcommingOrdersState extends State<UpcommingOrders> {
   }
 
   Column _emptyState(BuildContext context) {
-    
     return Column(
       children: [
         const Spacer(),
@@ -59,19 +53,13 @@ class _UpcommingOrdersState extends State<UpcommingOrders> {
         ),
         const SizedBox(height: 30),
         Text(
-           "No Order",
-          style: TextStyle(
-            fontSize: 32.sp,
-            fontWeight: FontWeight.w900,
-          ),
+          "No Order",
+          style: TextStyle(fontSize: 32.sp, fontWeight: FontWeight.w900),
         ),
         Text(
-           "No order till now",
+          "No order till now",
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.normal,
-          ),
+          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.normal),
         ),
         const Spacer(),
       ],
@@ -80,32 +68,23 @@ class _UpcommingOrdersState extends State<UpcommingOrders> {
 }
 
 class OrderCard extends StatelessWidget {
-  const OrderCard({
-    super.key,
-    required this.orderModel,
-  });
+  const OrderCard({super.key, required this.orderModel});
 
   final OrderModel orderModel;
 
   @override
   Widget build(BuildContext context) {
-   
-    String formattedDate =
-        DateFormat('dd MMM, yyyy h:mm a').format(orderModel.createdAt);
+    String formattedDate = DateFormat(
+      'dd MMM, yyyy h:mm a',
+    ).format(orderModel.createdAt);
     return Container(
       width: 250.w,
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 10,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
-          BoxShadow(
-            blurRadius: 12,
-            color: Colors.black.withOpacity(.05),
-          )
+          BoxShadow(blurRadius: 12, color: Colors.black.withOpacity(.05)),
         ],
       ),
       child: Column(
@@ -114,10 +93,7 @@ class OrderCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text(
-                formattedDate,
-                style: const TextStyle(color: Colors.grey),
-              )
+              Text(formattedDate, style: const TextStyle(color: Colors.grey)),
             ],
           ),
           Row(
@@ -128,12 +104,12 @@ class OrderCard extends StatelessWidget {
                   color: orderModel.status == OrderStatus.pending
                       ? const Color(0xFFFFCC3D)
                       : orderModel.status == OrderStatus.delivered
-                          ? Colors.green.shade800
-                          : orderModel.status == OrderStatus.processing
-                              ? Colors.blue.shade800
-                              : orderModel.status == OrderStatus.shipped
-                                  ? Colors.purple.shade800
-                                  : Colors.red.shade800,
+                      ? Colors.green.shade800
+                      : orderModel.status == OrderStatus.processing
+                      ? Colors.blue.shade800
+                      : orderModel.status == OrderStatus.shipped
+                      ? Colors.purple.shade800
+                      : Colors.red.shade800,
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -147,16 +123,12 @@ class OrderCard extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                "${orderModel.totalCharge} SAR",
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              )
+                "₹ ${orderModel.totalCharge}",
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             ],
           ),
-          SizedBox(
-            height: 7.h,
-          ),
+          SizedBox(height: 7.h),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -171,29 +143,21 @@ class OrderCard extends StatelessWidget {
               if (orderModel.address.pipeImage == null)
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(
-                    "assets/images/truck.png",
-                    height: 55,
-                  ),
+                  child: Image.asset("assets/images/truck.png", height: 55),
                 ),
-              SizedBox(
-                width: 10.w,
-              ),
+              SizedBox(width: 10.w),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "${ "QTY"} ${orderModel.quantity} ${ "sq m"}",
+                      "${"QTY"} ${orderModel.quantity} ${"Litres"}",
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(
-                      orderModel.address.address,
-                      style: const TextStyle(),
-                    ),
+                    Text(orderModel.address.address, style: const TextStyle()),
                   ],
                 ),
               ),
