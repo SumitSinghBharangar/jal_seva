@@ -833,7 +833,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                             id: ref.id,
                             address: _addressModel!,
                             isExpressDelivery: addressTypeNotifier.value!,
-                            quantity: quantityNotifier.value,
+                            quantity: quantityNotifier.value * 100,
                             totalCharge: total,
                             createdAt: DateTime.now(),
                             uid: uid,
