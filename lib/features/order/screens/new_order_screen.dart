@@ -77,8 +77,6 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
     await _pendingRef.set(_pendingOrder!.toMap());
 
-    _pendingOrder = null;
-    _pendingRef = null;
     Fluttertoast.showToast(msg: "Order Placed Successfully!");
     var transactionRef = FirebaseFirestore.instance
         .collection('transactions')
@@ -95,6 +93,8 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
     );
 
     await transactionRef.set(transaction.toMap());
+    _pendingOrder = null;
+    _pendingRef = null;
     if (context.mounted) {
       context.push(Routes.orderPlaced.path);
     }

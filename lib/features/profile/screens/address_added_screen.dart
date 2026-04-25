@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jal_seva/common/animations/fade_in.dart';
 import 'package:jal_seva/common/buttons/dynamic_button.dart';
+import 'package:provider/provider.dart';
 
 class AddressAddedScreen extends StatefulWidget {
   const AddressAddedScreen({super.key});
@@ -52,6 +53,14 @@ class _AddressAddedScreenState extends State<AddressAddedScreen>
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _controller.repeat(reverse: true);
     });
+  }
+
+  @override
+  void dispose() {
+    _controller;
+    _animation;
+    _animation2;
+    super.dispose();
   }
 
   @override
