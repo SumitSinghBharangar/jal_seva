@@ -1,6 +1,5 @@
 import 'dart:convert';
-
-import 'package:jal_seva/common/constants/app_collections.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:jal_seva/common/models/address_model.dart';
 
 class OrderModel {
@@ -32,8 +31,9 @@ class OrderModel {
     this.driverId,
   });
 
+  // 🔥 Firestore Map (uses Timestamp)
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+    return {
       'id': id,
       'address': address.toMap(),
       'isExpressDelivery': isExpressDelivery,
@@ -49,6 +49,25 @@ class OrderModel {
     };
   }
 
+  // 🔥 JSON Map (NO Timestamp here)
+  Map<String, dynamic> toJsonMap() {
+    return {
+      'id': id,
+      'address': address.toMap(),
+      'isExpressDelivery': isExpressDelivery,
+      'quantity': quantity,
+      'totalCharge': totalCharge,
+      'createdAt': createdAt.toIso8601String(),
+      'uid': uid,
+      'status': status.name,
+      'isClosed': isClosed,
+      'rating': rating,
+      'feedBack': feedBack,
+      "driverId": driverId,
+    };
+  }
+
+  // 🔥 Firestore → Model
   factory OrderModel.fromMap(Map<String, dynamic> map) {
     return OrderModel(
       status: OrderStatusExt.fromString(map['status'] as String),
@@ -66,16 +85,33 @@ class OrderModel {
     );
   }
 
-  String toJson() => json.encode(toMap());
+  // 🔥 JSON → Model
+  factory OrderModel.fromJson(String source) {
+    final map = json.decode(source);
 
-  factory OrderModel.fromJson(String source) =>
-      OrderModel.fromMap(json.decode(source) as Map<String, dynamic>);
+    return OrderModel(
+      status: OrderStatusExt.fromString(map['status']),
+      id: map['id'],
+      address: AddressModel.fromMap(map['address']),
+      isExpressDelivery: map['isExpressDelivery'],
+      quantity: map['quantity'],
+      totalCharge: map['totalCharge'],
+      createdAt: DateTime.parse(map['createdAt']), // ✅ fixed
+      uid: map['uid'],
+      isClosed: map['isClosed'],
+      rating: map['rating'],
+      feedBack: map['feedBack'],
+      driverId: map['driverId'],
+    );
+  }
+
+  // 🔥 Model → JSON String
+  String toJson() => json.encode(toJsonMap());
 }
 
 enum OrderStatus { pending, processing, shipped, delivered, cancelled }
 
 extension OrderStatusExt on OrderStatus {
-  // Convert enum to string
   String get name {
     switch (this) {
       case OrderStatus.pending:
@@ -91,7 +127,6 @@ extension OrderStatusExt on OrderStatus {
     }
   }
 
-  // Convert string to enum
   static OrderStatus fromString(String status) {
     switch (status) {
       case 'pending':
@@ -104,7 +139,6 @@ extension OrderStatusExt on OrderStatus {
         return OrderStatus.delivered;
       case 'cancelled':
         return OrderStatus.cancelled;
-
       default:
         throw ArgumentError('Invalid order status: $status');
     }

@@ -13,7 +13,9 @@ import 'package:jal_seva/features/home/root/root_screen.dart';
 import 'package:jal_seva/features/home/screen/home_screen.dart';
 import 'package:jal_seva/features/notification/screens/notification_screen.dart';
 import 'package:jal_seva/features/notification/screens/notifications_setting_screen.dart';
+import 'package:jal_seva/features/order/model/order_model.dart';
 import 'package:jal_seva/features/order/screens/new_order_screen.dart';
+import 'package:jal_seva/features/order/screens/order_detail_screen.dart';
 import 'package:jal_seva/features/order/screens/order_placed_screen.dart';
 import 'package:jal_seva/features/order/screens/order_screen.dart';
 import 'package:jal_seva/features/profile/screens/about_screen.dart';
@@ -177,17 +179,16 @@ final router = GoRouter(
     //         );
     //   },
     // ),
-    // GoRoute(
-    //   parentNavigatorKey: _rootNavigatorKey,
-    //   path: Routes.orderDetail.path,
-    //   name: Routes.orderDetail.name,
-    //   pageBuilder: (context, state) {
-    //     return CupertinoPage(
-    //         child: OrderDetailScreen(
-    //       model: state.extra as OrderModel,
-    //     ));
-    //   },
-    // ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: Routes.orderDetail.path,
+      name: Routes.orderDetail.name,
+      pageBuilder: (context, state) {
+        return CupertinoPage(
+          child: OrderDetailScreen(model: state.extra as OrderModel),
+        );
+      },
+    ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: Routes.profileEditScreen.path,

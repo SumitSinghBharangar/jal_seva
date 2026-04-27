@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -29,12 +28,12 @@ class OrderDetailScreenState extends State<OrderDetailScreen> {
   Map<String, dynamic>? orderData;
 
   Future<void> _makePhoneCall(String phoneNumber) async {
-    String url = 'tel:$phoneNumber';
-    if (await canLaunch(url)) {
-      await launch(url);
+    final Uri uri = Uri(scheme: 'tel', path: phoneNumber);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
     } else {
-      // Handle case where the phone number cannot be launched
-      print('Could not launch $url');
+      print('Could not launch $uri');
     }
   }
 
@@ -55,7 +54,7 @@ class OrderDetailScreenState extends State<OrderDetailScreen> {
           .doc(widget.model.id)
           .get();
 
-      if (docSnapshot.exists) {
+      if (docSnapshot.exists && docSnapshot.data() != null) {
         setState(() {
           orderData = docSnapshot.data();
         });
