@@ -8,6 +8,8 @@ import 'package:jal_seva/common/app_colors.dart';
 import 'package:jal_seva/common/buttons/scale_button.dart';
 import 'package:jal_seva/common/constants/app_collections.dart';
 import 'package:jal_seva/features/order/model/order_model.dart';
+import 'package:jal_seva/features/wallet/model/transection_model.dart';
+import 'package:jal_seva/features/wallet/widgets/transection_widget.dart';
 import 'package:jal_seva/routing/routes.dart';
 
 class WalletScreen extends StatefulWidget {
@@ -76,7 +78,7 @@ class _WalletScreenState extends State<WalletScreen> {
                           return Text("Fetching"); // Show loading indicator
                         }
                         return Text(
-                          " ${snapshot.data?["balance"] ?? 0}",
+                          "₹ ${snapshot.data?["balance"] ?? 0}",
                           style: TextStyle(
                             fontSize: 30.sp,
                             fontWeight: FontWeight.bold,
@@ -130,7 +132,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 ScaleButton(
                   scale: 0.97,
                   onTap: () {
-                    context.push(Routes.transectionScreen.path);
+                    context.push(Routes.historyScreen.path);
                   },
                   child: Text(
                     "View All",
@@ -146,13 +148,14 @@ class _WalletScreenState extends State<WalletScreen> {
             const SizedBox(height: 10.0),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: ordersCollection
+                stream: FirebaseFirestore.instance
+                    .collection('transactions')
                     .where(
                       "uid",
                       isEqualTo: FirebaseAuth.instance.currentUser!.uid,
                     )
-                    .orderBy('createdAt', descending: true)
-                    .limit(3)
+                    .orderBy('paidAt', descending: true)
+                    .limit(5)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -160,7 +163,7 @@ class _WalletScreenState extends State<WalletScreen> {
                   }
 
                   if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return const Center(child: Text('No orders found'));
+                    return const Center(child: Text('No transactions found'));
                   }
 
                   final docs = snapshot.data!.docs;
@@ -170,12 +173,10 @@ class _WalletScreenState extends State<WalletScreen> {
                         SizedBox(height: 10.h),
                     itemCount: docs.length,
                     itemBuilder: (context, index) {
-                      OrderModel orderModel = OrderModel.fromMap(
+                      TransactionModel transaction = TransactionModel.fromMap(
                         docs[index].data() as Map<String, dynamic>,
                       );
-                      return Container();
-
-                      // return TransectionWidget(model: orderModel);
+                      return TransactionWidget(transaction: transaction);
                     },
                   );
                 },

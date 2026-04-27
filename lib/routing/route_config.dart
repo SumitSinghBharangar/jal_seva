@@ -29,6 +29,7 @@ import 'package:jal_seva/features/profile/screens/saved_address.dart';
 import 'package:jal_seva/features/subscription/screens/empty_suscription_screen.dart';
 import 'package:jal_seva/features/subscription/screens/new_subscription_screen.dart';
 import 'package:jal_seva/features/subscription/screens/subscription_screen.dart';
+import 'package:jal_seva/features/wallet/screens/transections_screen.dart';
 import 'package:jal_seva/features/wallet/screens/wallet_screen.dart';
 
 import 'package:jal_seva/routing/routes.dart';
@@ -148,16 +149,14 @@ final router = GoRouter(
         return const CupertinoPage(child: SubscriptionScreen());
       },
     ),
-    // GoRoute(
-    //   parentNavigatorKey: _rootNavigatorKey,
-    //   path: Routes.historyScreen.path,
-    //   name: Routes.historyScreen.name,
-    //   pageBuilder: (context, state) {
-    //     return const CupertinoPage(
-    //       child: HistoryScreen(),
-    //     );
-    //   },
-    // ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: Routes.transectionScreen.path,
+      name: Routes.transectionScreen.name,
+      pageBuilder: (context, state) {
+        return const CupertinoPage(child: TransactionsScreen());
+      },
+    ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: Routes.notificationScreen.path,
