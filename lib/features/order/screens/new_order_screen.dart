@@ -1,9 +1,11 @@
+import 'dart:developer';
 import 'dart:ui';
 import 'package:jal_seva/common/enum.dart';
 import 'package:jal_seva/features/order/model/order_model.dart';
 import 'package:jal_seva/features/profile/screens/new_address_screen.dart';
 import 'package:jal_seva/features/profile/screens/saved_address.dart';
 import 'package:jal_seva/features/wallet/model/transection_model.dart';
+import 'package:jal_seva/utils.dart';
 
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
@@ -35,8 +37,8 @@ class NewOrderScreen extends StatefulWidget {
 class _NewOrderScreenState extends State<NewOrderScreen> {
   String? addressId;
 
-  final ValueNotifier<PaymentMethod> selectedPaymentMethod =
-      ValueNotifier<PaymentMethod>(PaymentMethod.jalSevaWallet);
+  final ValueNotifier<TxnPaymentMethod> selectedPaymentMethod =
+      ValueNotifier<TxnPaymentMethod>(TxnPaymentMethod.wallet);
 
   late Razorpay _razorpay;
 
@@ -315,7 +317,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                 ),
               ],
             ),
-            SizedBox(height: MediaQuery.paddingOf(context).bottom + 5),
+            SizedBox(height: MediaQuery.paddingOf(context).bottom),
           ],
         ),
       ),
@@ -539,7 +541,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                     );
                   },
                 ),
-                SizedBox(height: 30.h),
+                SizedBox(height: 5.h),
                 CustomTextField(
                   iconData: Iconsax.bucket,
                   removeFocusOutside: true,
@@ -547,7 +549,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                   onChanged: (value) {
                     quantityNotifier.value = int.tryParse(value) ?? 0;
                   },
-                  hintText: "Enter Quantity (sq. meter)",
+                  hintText: "Enter Quantity (Litres)",
                 ),
               ],
             ),
@@ -708,7 +710,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                     ),
                     SizedBox(height: 20.h),
 
-                    ValueListenableBuilder<PaymentMethod>(
+                    ValueListenableBuilder<TxnPaymentMethod>(
                       valueListenable: selectedPaymentMethod,
                       builder: (context, value, child) {
                         return Column(
@@ -718,7 +720,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                 border: Border.all(color: Colors.grey),
                               ),
                               child: Material(
-                                child: RadioListTile<PaymentMethod>(
+                                child: RadioListTile<TxnPaymentMethod>(
                                   title: Text(
                                     "Jal-Seva Wallet",
                                     style: TextStyle(
@@ -727,9 +729,10 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                     ),
                                   ),
 
-                                  value: PaymentMethod.jalSevaWallet,
+                                  value: TxnPaymentMethod.wallet,
+                                  activeColor: Colors.green,
                                   groupValue: value,
-                                  onChanged: (PaymentMethod? newValue) {
+                                  onChanged: (TxnPaymentMethod? newValue) {
                                     selectedPaymentMethod.value = newValue!;
                                   },
                                   controlAffinity: ListTileControlAffinity
@@ -744,7 +747,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                 border: Border.all(color: Colors.grey),
                               ),
                               child: Material(
-                                child: RadioListTile<PaymentMethod>(
+                                child: RadioListTile<TxnPaymentMethod>(
                                   title: Text(
                                     "Card, UPI, Netbanking & more",
                                     style: TextStyle(
@@ -752,10 +755,10 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                       color: Colors.black,
                                     ),
                                   ),
-                                  value: PaymentMethod.cardPayment,
+                                  value: TxnPaymentMethod.razorpay,
                                   groupValue: value,
                                   activeColor: Colors.green,
-                                  onChanged: (PaymentMethod? newValue) {
+                                  onChanged: (TxnPaymentMethod? newValue) {
                                     selectedPaymentMethod.value = newValue!;
                                   },
                                   controlAffinity: ListTileControlAffinity
@@ -796,7 +799,12 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                           _pendingOrder = order;
                           _pendingRef = ref;
 
-                          _openRazorpay(total);
+                          if (selectedPaymentMethod.value ==
+                              TxnPaymentMethod.wallet) {
+                            __payViaWallet(total);
+                          } else {
+                            _openRazorpay(total);
+                          }
                         },
                       ),
                     ),
@@ -829,5 +837,56 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
       print("Razorpay Error: $e");
       Fluttertoast.showToast(msg: "Something went wrong!");
     }
+  }
+
+  Future<void> __payViaWallet(num amount) async {
+    showLoading(context);
+    try {
+      if (_pendingOrder == null || _pendingRef == null) return;
+      final uid = FirebaseAuth.instance.currentUser!.uid;
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .get();
+      final walletBalance = userDoc.data()?['balance'] ?? 0;
+      if (walletBalance < amount) {
+        Fluttertoast.showToast(msg: "Insufficient wallet balance!");
+        return;
+      }
+      await _pendingRef!.set(_pendingOrder!.toMap());
+
+      await FirebaseFirestore.instance.collection('users').doc(uid).update({
+        'balance': FieldValue.increment(-amount),
+      });
+
+      var transactionRef = FirebaseFirestore.instance
+          .collection('transactions')
+          .doc();
+
+      TransactionModel transaction = TransactionModel(
+        id: transactionRef.id,
+        uid: uid,
+        orderId: _pendingOrder!.id,
+        amount: amount,
+        method: TxnPaymentMethod.wallet,
+        status: TxnPaymentStatus.success,
+        paidAt: DateTime.now(),
+        remark: 'Paid via app wallet',
+      );
+
+      await transactionRef.set(transaction.toMap());
+
+      _pendingOrder = null;
+      _pendingRef = null;
+
+      Fluttertoast.showToast(msg: "Order Placed Successfully!");
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+    }
+    if (context.mounted) {
+      context.pop();
+    }
+    // context.push(Routes.home.path);
   }
 }

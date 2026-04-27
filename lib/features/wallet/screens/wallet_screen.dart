@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -24,12 +26,14 @@ class WalletScreen extends StatefulWidget {
 
 class _WalletScreenState extends State<WalletScreen> {
   late Razorpay _razorpay;
+  num _pendingTopUpAmount = 0;
 
   final String uid = FirebaseAuth.instance.currentUser!.uid;
 
   final List<String> imgList = ['assets/images/promo_container.png'];
 
   void _openTopUpRazorpay(num amount) {
+    _pendingTopUpAmount = amount;
     var options = {
       'key': 'rzp_test_0JYAov6Cmnw2l4',
       'amount': (amount * 100).toInt(),
@@ -55,17 +59,16 @@ class _WalletScreenState extends State<WalletScreen> {
   void _handleTopUpSuccess(PaymentSuccessResponse response) async {
     try {
       final uid = FirebaseAuth.instance.currentUser!.uid;
-      final amount =
-          num.tryParse((response.data?['amount'] ?? '0').toString()) ?? 0;
+      final amount = _pendingTopUpAmount;
 
-      // Add amount to wallet
+      if (amount <= 0) {
+        return;
+      }
+      _pendingTopUpAmount = 0;
       await FirebaseFirestore.instance.collection('users').doc(uid).update({
-        'balance': FieldValue.increment(
-          amount / 100,
-        ), // convert paise back to INR
+        'balance': FieldValue.increment(amount), // convert paise back to INR
       });
 
-      // Save topup transaction
       var transactionRef = FirebaseFirestore.instance
           .collection('transactions')
           .doc();
@@ -73,8 +76,8 @@ class _WalletScreenState extends State<WalletScreen> {
       TransactionModel transaction = TransactionModel(
         id: transactionRef.id,
         uid: uid,
-        orderId: 'TOPUP', // no order for topup
-        amount: amount / 100, // convert paise back to INR
+        orderId: 'TOPUP',
+        amount: amount,
         method: TxnPaymentMethod.razorpay,
         status: TxnPaymentStatus.success,
         paidAt: DateTime.now(),
@@ -92,7 +95,7 @@ class _WalletScreenState extends State<WalletScreen> {
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    print("Payment Error: ${response.code} - ${response.message}");
+    log("Payment Error: ${response.code} - ${response.message}");
     Fluttertoast.showToast(msg: "Payment Failed: ${response.message}");
   }
 
