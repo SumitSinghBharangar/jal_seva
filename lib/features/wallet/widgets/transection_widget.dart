@@ -57,7 +57,7 @@ class TransactionWidget extends StatelessWidget {
                 ),
                 SizedBox(height: 4),
                 Text(
-                  "Order #${transaction.orderId.substring(0, 8).toUpperCase()}",
+                  "Order #${transaction.orderId.substring(0, transaction.orderId.length - 1).toUpperCase()}",
                   style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
                 ),
                 SizedBox(height: 2),

@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:jal_seva/common/enum.dart';
 import 'package:jal_seva/features/order/model/order_model.dart';
+import 'package:jal_seva/features/profile/screens/new_address_screen.dart';
 import 'package:jal_seva/features/profile/screens/saved_address.dart';
 import 'package:jal_seva/features/wallet/model/transection_model.dart';
 
@@ -135,49 +136,6 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
     setState(() {});
   }
 
-  // final paymentConfig = PaymentConfig(
-  //   publishableApiKey: 'pk_test_r6eZg85QyduWZ7PNTHT56BFvZpxJgNJ2PqPMDoXA',
-  //   amount: 1000, // SAR 1
-  //   description: 'order #1324',
-  //   metadata: {'size': '250g'},
-  //   creditCard: CreditCardConfig(saveCard: false, manual: false),
-  //   applePay: ApplePayConfig(
-  //       merchantId: 'merchant.mysr.fghurayri',
-  //       label: 'Blue Coffee Beans',
-  //       manual: false),
-  // );
-
-  // void onPaymentResult(result) {
-  //   if (result is PaymentResponse) {
-  //     Fluttertoast.showToast(msg: result.status.name);
-  //     switch (result.status) {
-  //       case PaymentStatus.paid:
-  //         context.push(Routes.orderPlaced.path);
-
-  //         break;
-  //       case PaymentStatus.failed:
-  //         Fluttertoast.showToast(
-  //           msg: AppLocalizations.of(context)!.yourPaymentFailedTryAgain,
-  //         );
-  //         Navigator.pop(context);
-  //         break;
-  //       case PaymentStatus.authorized:
-  //         // handle authorized.
-  //         break;
-  //       default:
-  //     }
-  //     return;
-  //   }
-  //   if (result is ApiError) {}
-  //   if (result is AuthError) {}
-  //   if (result is ValidationError) {}
-  //   if (result is PaymentCanceledError) {}
-  //   if (result is UnprocessableTokenError) {}
-  //   if (result is TimeoutError) {}
-  //   if (result is NetworkError) {}
-  //   if (result is UnspecifiedError) {}
-  // }
-
   @override
   Widget build(BuildContext context) {
     var w = context.watch<AuthServices>();
@@ -207,7 +165,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                         text: "Vehicle Capacity",
                         children: [
                           TextSpan(
-                            text: " : ${(q) * 100} ${"Litres"}",
+                            text: " : ${(q)} ${"Litres"}",
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -280,7 +238,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                         text: "Charge",
                         children: [
                           TextSpan(
-                            text: " : ₹ ${(q) * 50}",
+                            text: " : ₹ ${(q) * .50}",
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -313,7 +271,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                             valueListenable: quantityNotifier,
                             builder: (context, quantity, _) {
                               var amount =
-                                  (quantity * 50) +
+                                  (quantity * .50) +
                                   (type == true ? 50 : 0) +
                                   100;
                               if (quantity == 0) {
@@ -567,16 +525,9 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                       child: SfSliderTheme(
                         data: const SfSliderThemeData(thumbRadius: 10),
                         child: SfSlider(
-                          max: 50.0,
+                          max: 5000,
                           stepSize: 1,
-                          thumbIcon: Container(
-                            alignment: Alignment.center,
-                            // child: Text(
-                            //   ((value).toInt() * 10).toString(),
-                            //   style: const TextStyle(color: Colors.white),
-                            //   textAlign: TextAlign.center,
-                            // ),
-                          ),
+                          thumbIcon: Container(alignment: Alignment.center),
                           value: value,
                           onChanged: (dynamic a) {
                             setState(() {
@@ -588,15 +539,16 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                     );
                   },
                 ),
-                // CustomTextField(
-                //   iconData: Iconsax.bucket,
-                //   removeFocusOutside: true,
-                //   isNumber: true,
-                //   onChanged: (value) {
-                //     quantityNotifier.value = int.tryParse(value) ?? 0;
-                //   },
-                //   hintText: "Enter Quantity (sq. meter)",
-                // ),
+                SizedBox(height: 30.h),
+                CustomTextField(
+                  iconData: Iconsax.bucket,
+                  removeFocusOutside: true,
+                  isNumber: true,
+                  onChanged: (value) {
+                    quantityNotifier.value = int.tryParse(value) ?? 0;
+                  },
+                  hintText: "Enter Quantity (sq. meter)",
+                ),
               ],
             ),
           ),
@@ -824,7 +776,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                           String uid = FirebaseAuth.instance.currentUser!.uid;
 
                           var total =
-                              ((quantityNotifier.value) * 50) +
+                              ((quantityNotifier.value) * .50) +
                               (addressTypeNotifier.value == true ? 50 : 0) +
                               100;
 
@@ -845,157 +797,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                           _pendingRef = ref;
 
                           _openRazorpay(total);
-
-                          // if (context.mounted) {
-                          //   if (selectedPaymentMethod.value ==
-                          //       PaymentMethod.cardPayment) {
-                          //     Navigator.push(
-                          //       context,
-                          //       CupertinoPageRoute(
-                          //         builder: (context) => CardPaymentScreen(
-                          //           paymentConfig: paymentconfig,
-                          //           onPaymentResult: (result) async {
-                          //             if (result is PaymentResponse) {
-                          //               Fluttertoast.showToast(
-                          //                 msg: result.status.name,
-                          //               );
-                          //               switch (result.status) {
-                          //                 case PaymentStatus.paid:
-                          //                   await ref.set(order.toMap());
-                          //                   Fluttertoast.showToast(
-                          //                     msg: "Order Placed successfully",
-                          //                   );
-                          //                   context.push(
-                          //                     Routes.orderPlaced.path,
-                          //                   );
-                          //                   break;
-                          //                 case PaymentStatus.failed:
-                          //                   Fluttertoast.showToast(
-                          //                     msg:
-                          //                         l?.yourPaymentFailedTryAgain ??
-                          //                         "Your Payment failed try again",
-                          //                   );
-                          //                   Navigator.pop(context);
-                          //                   break;
-                          //                 case PaymentStatus.authorized:
-                          //                   // handle authorized.
-                          //                   break;
-                          //                 default:
-                          //               }
-                          //               return;
-                          //             }
-                          //             if (result is ApiError) {}
-                          //             if (result is AuthError) {}
-                          //             if (result is ValidationError) {}
-                          //             if (result is PaymentCanceledError) {}
-                          //             if (result is UnprocessableTokenError) {}
-                          //             if (result is TimeoutError) {}
-                          //             if (result is NetworkError) {}
-                          //             if (result is UnspecifiedError) {}
-                          //           },
-                          //         ),
-                          //       ),
-                          //     );
-                          //   } else if (selectedPaymentMethod.value ==
-                          //       PaymentMethod.applePay) {
-                          //     Navigator.push(
-                          //       context,
-                          //       CupertinoPageRoute(
-                          //         builder: (context) => ApplepayScreen(
-                          //           paymentConfig: paymentconfig,
-                          //           onPaymentResult: (result) async {
-                          //             if (result is PaymentResponse) {
-                          //               Fluttertoast.showToast(
-                          //                 msg: result.status.name,
-                          //               );
-                          //               switch (result.status) {
-                          //                 case PaymentStatus.paid:
-                          //                   var ref = ordersCollection.doc();
-                          //                   await ref.set(order.toMap());
-                          //                   context.push(
-                          //                     Routes.orderPlaced.path,
-                          //                   );
-
-                          //                   break;
-                          //                 case PaymentStatus.failed:
-                          //                   Fluttertoast.showToast(
-                          //                     msg:
-                          //                         "Your Payment failed try again",
-                          //                   );
-                          //                   Navigator.pop(context);
-                          //                   break;
-                          //                 case PaymentStatus.authorized:
-                          //                   // handle authorized.
-                          //                   break;
-                          //                 default:
-                          //               }
-                          //               return;
-                          //             }
-                          //             if (result is ApiError) {}
-                          //             if (result is AuthError) {}
-                          //             if (result is ValidationError) {}
-                          //             if (result is PaymentCanceledError) {}
-                          //             if (result is UnprocessableTokenError) {}
-                          //             if (result is TimeoutError) {}
-                          //             if (result is NetworkError) {}
-                          //             if (result is UnspecifiedError) {}
-                          //           },
-                          //         ),
-                          //       ),
-                          //     );
-                          //   } else {
-                          //     final userRef = users.doc(uid);
-                          //     final snapshot = await userRef.get();
-
-                          //     if (snapshot.exists) {
-                          //       final data = snapshot.data()!;
-                          //       double balance = double.parse(data["balance"]);
-                          //       if (balance <= total) {
-                          //         Fluttertoast.showToast(
-                          //           msg: "Amount not sufficient",
-                          //         );
-                          //         return;
-                          //       } else {
-                          //         try {
-                          //           showLoading(context);
-                          //           balance = balance - total;
-
-                          //           await userRef.update({
-                          //             "balance": balance.toString(),
-                          //           });
-
-                          //           await ref.set(order.toMap());
-                          //           if (context.mounted) {
-                          //             context.pop();
-                          //             context.go(Routes.orderPlaced.path);
-                          //           }
-
-                          //           return;
-                          //         } catch (e) {
-                          //           log(e.toString());
-                          //           Fluttertoast.showToast(msg: e.toString());
-                          //         }
-                          //       }
-                          //     }
-                          //   }
                         },
-
-                        // await ref.set(order.toMap());
-
-                        // if (context.mounted) {
-                        //   context.pop();
-                        //   Navigator.push(
-                        //     context,
-                        //     CupertinoPageRoute(
-                        //       builder: (context) => PaymentScreen(
-                        //         paymentConfig: paymentconfig,
-                        //         onPaymentResult: onPaymentResult,
-                        //       ),
-                        //     ),
-                        //   );
-                        // context.push(Routes.orderPlaced.path);
-                        // }
-                        // },
                       ),
                     ),
                     SizedBox(height: 10.h),

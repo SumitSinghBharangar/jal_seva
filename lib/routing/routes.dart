@@ -32,11 +32,6 @@ class Routes {
     path: '/topupScreen',
   );
 
-  static _Routes cardPaymentScreen = _Routes(
-    name: 'cardPaymentScreen',
-    path: '/cardPaymentScreen',
-  );
-
   static _Routes emptySubscriptionScreen = _Routes(
     name: 'emptySubscriptionScreen',
     path: '/emptySubscriptionScreen',
@@ -79,11 +74,6 @@ class Routes {
     path: '/profileEditScreen',
   );
 
-  static _Routes languageScreen = _Routes(
-    name: 'languageScreen',
-    path: '/languageScreen',
-  );
-
   static _Routes addressAdded = _Routes(
     name: 'addressAdded',
     path: '/addressAdded',
@@ -112,21 +102,11 @@ class Routes {
 
   static _Routes rateOrder = _Routes(name: 'rateOrder', path: '/rateOrder');
 
-  static _Routes paymentScreen = _Routes(
-    name: 'paymentScreen',
-    path: '/paymentScreen',
-  );
-
   static _Routes home = _Routes(name: 'home', path: '/home');
 
   static _Routes order = _Routes(name: 'order', path: '/order');
 
   static _Routes wallete = _Routes(name: 'wallete', path: '/wallete');
-
-  static _Routes historyScreen = _Routes(
-    name: 'historyScreen',
-    path: '/historyScreen',
-  );
 
   static _Routes subscription = _Routes(
     name: 'subscription',

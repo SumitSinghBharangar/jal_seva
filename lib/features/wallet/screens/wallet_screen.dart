@@ -3,14 +3,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jal_seva/common/app_colors.dart';
+import 'package:jal_seva/common/buttons/dynamic_button.dart';
 import 'package:jal_seva/common/buttons/scale_button.dart';
 import 'package:jal_seva/common/constants/app_collections.dart';
 import 'package:jal_seva/features/order/model/order_model.dart';
 import 'package:jal_seva/features/wallet/model/transection_model.dart';
 import 'package:jal_seva/features/wallet/widgets/transection_widget.dart';
 import 'package:jal_seva/routing/routes.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class WalletScreen extends StatefulWidget {
   const WalletScreen({super.key});
@@ -20,9 +23,92 @@ class WalletScreen extends StatefulWidget {
 }
 
 class _WalletScreenState extends State<WalletScreen> {
+  late Razorpay _razorpay;
+
   final String uid = FirebaseAuth.instance.currentUser!.uid;
 
   final List<String> imgList = ['assets/images/promo_container.png'];
+
+  void _openTopUpRazorpay(num amount) {
+    var options = {
+      'key': 'rzp_test_0JYAov6Cmnw2l4',
+      'amount': (amount * 100).toInt(),
+      'name': 'Jal-Seva',
+      'description': 'Wallet Top Up',
+      'prefill': {
+        'contact': FirebaseAuth.instance.currentUser?.phoneNumber ?? '',
+        'email': FirebaseAuth.instance.currentUser?.email ?? '',
+      },
+      'theme': {'color': '#3399cc'},
+    };
+
+    try {
+      _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handleTopUpSuccess);
+      _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+      _razorpay.open(options);
+    } catch (e) {
+      print("Razorpay TopUp Error: $e");
+      Fluttertoast.showToast(msg: "Something went wrong!");
+    }
+  }
+
+  void _handleTopUpSuccess(PaymentSuccessResponse response) async {
+    try {
+      final uid = FirebaseAuth.instance.currentUser!.uid;
+      final amount =
+          num.tryParse((response.data?['amount'] ?? '0').toString()) ?? 0;
+
+      // Add amount to wallet
+      await FirebaseFirestore.instance.collection('users').doc(uid).update({
+        'balance': FieldValue.increment(
+          amount / 100,
+        ), // convert paise back to INR
+      });
+
+      // Save topup transaction
+      var transactionRef = FirebaseFirestore.instance
+          .collection('transactions')
+          .doc();
+
+      TransactionModel transaction = TransactionModel(
+        id: transactionRef.id,
+        uid: uid,
+        orderId: 'TOPUP', // no order for topup
+        amount: amount / 100, // convert paise back to INR
+        method: TxnPaymentMethod.razorpay,
+        status: TxnPaymentStatus.success,
+        paidAt: DateTime.now(),
+        paymentId: response.paymentId,
+        remark: 'Wallet Top Up',
+      );
+
+      await transactionRef.set(transaction.toMap());
+
+      Fluttertoast.showToast(msg: "Wallet topped up successfully!");
+    } catch (e) {
+      print("TopUp Save Error: $e");
+      Fluttertoast.showToast(msg: "Something went wrong!");
+    }
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    print("Payment Error: ${response.code} - ${response.message}");
+    Fluttertoast.showToast(msg: "Payment Failed: ${response.message}");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handleTopUpSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+  }
+
+  @override
+  void dispose() {
+    _razorpay.clear();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +178,7 @@ class _WalletScreenState extends State<WalletScreen> {
                   ScaleButton(
                     scale: .97,
                     onTap: () {
-                      context.push(Routes.topupScreen.path);
+                      _showTopUpBottomSheet();
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -132,7 +218,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 ScaleButton(
                   scale: 0.97,
                   onTap: () {
-                    context.push(Routes.historyScreen.path);
+                    context.push(Routes.transectionScreen.path);
                   },
                   child: Text(
                     "View All",
@@ -201,6 +287,130 @@ class _WalletScreenState extends State<WalletScreen> {
                   .toList(),
             ),
             SizedBox(height: 10.h),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showTopUpBottomSheet() {
+    final TextEditingController amountController = TextEditingController();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          left: 20,
+          right: 20,
+          top: 20,
+          bottom:
+              MediaQuery.of(context).viewInsets.bottom + 20, // keyboard padding
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Title
+            Text(
+              "Top Up Wallet",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 6),
+            Text(
+              "Enter amount to add to your wallet",
+              style: TextStyle(color: Colors.grey.shade500, fontSize: 13),
+            ),
+
+            SizedBox(height: 20),
+
+            // Quick amount chips
+            Wrap(
+              spacing: 8,
+              children: [100, 200, 500, 1000].map((amt) {
+                return GestureDetector(
+                  onTap: () {
+                    amountController.text = amt.toString();
+                  },
+                  child: Chip(
+                    label: Text("₹$amt"),
+                    backgroundColor: Colors.blue.withOpacity(0.1),
+                    labelStyle: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+
+            SizedBox(height: 16),
+
+            // Amount input
+            TextField(
+              controller: amountController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                prefixText: "₹  ",
+                prefixStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.black87,
+                ),
+                hintText: "Enter amount",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.blue, width: 2),
+                ),
+              ),
+            ),
+
+            SizedBox(height: 20),
+
+            // Pay button
+            SizedBox(
+              width: double.infinity,
+              child: DynamicButton(
+                onPressed: () {
+                  final amount = num.tryParse(amountController.text.trim());
+
+                  // Validation
+                  if (amount == null || amount <= 0) {
+                    Fluttertoast.showToast(msg: "Please enter a valid amount!");
+                    return;
+                  }
+
+                  if (amount < 10) {
+                    Fluttertoast.showToast(msg: "Minimum topup amount is ₹10!");
+                    return;
+                  }
+
+                  if (amount > 10000) {
+                    Fluttertoast.showToast(
+                      msg: "Maximum topup amount is ₹10,000!",
+                    );
+                    return;
+                  }
+
+                  Navigator.pop(context);
+                  _openTopUpRazorpay(amount);
+                },
+                child: Text(
+                  "Proceed to Pay",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

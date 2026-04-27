@@ -90,16 +90,7 @@ final router = GoRouter(
         return const CupertinoPage(child: SavedAddress());
       },
     ),
-    // GoRoute(
-    //   parentNavigatorKey: _rootNavigatorKey,
-    //   path: Routes.transectionScreen.path,
-    //   name: Routes.transectionScreen.name,
-    //   pageBuilder: (context, state) {
-    //     return const CupertinoPage(
-    //       child: TransectionScreen(),
-    //     );
-    //   },
-    // ),
+
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: Routes.newAddress.path,
