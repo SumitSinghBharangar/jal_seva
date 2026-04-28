@@ -27,11 +27,6 @@ class Routes {
 
   static _Routes profile = _Routes(name: 'profile', path: '/profile');
 
-  static _Routes topupScreen = _Routes(
-    name: 'topupScreen',
-    path: '/topupScreen',
-  );
-
   static _Routes emptySubscriptionScreen = _Routes(
     name: 'emptySubscriptionScreen',
     path: '/emptySubscriptionScreen',

@@ -207,16 +207,14 @@ final router = GoRouter(
     //     );
     //   },
     // ),
-    // GoRoute(
-    //   parentNavigatorKey: _rootNavigatorKey,
-    //   path: Routes.newSubscription.path,
-    //   name: Routes.newSubscription.name,
-    //   pageBuilder: (context, state) {
-    //     return const CupertinoPage(
-    //       child: NewSubscriptionScreen(),
-    //     );
-    //   },
-    // ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: Routes.newSubscription.path,
+      name: Routes.newSubscription.name,
+      pageBuilder: (context, state) {
+        return const CupertinoPage(child: NewSubscriptionScreen());
+      },
+    ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: Routes.notificationSettingScreen.path,
@@ -241,16 +239,7 @@ final router = GoRouter(
         return const CupertinoPage(child: FeedbackFormScreen());
       },
     ),
-    // GoRoute(
-    //   parentNavigatorKey: _rootNavigatorKey,
-    //   path: Routes.topupScreen.path,
-    //   name: Routes.topupScreen.name,
-    //   pageBuilder: (context, state) {
-    //     return const CupertinoPage(
-    //       child: TopupScreen(),
-    //     );
-    //   },
-    // ),
+
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: Routes.aboutScreen.path,
