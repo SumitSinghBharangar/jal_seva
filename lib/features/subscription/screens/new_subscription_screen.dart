@@ -161,7 +161,7 @@ class _NewOrderScreenStateState extends State<NewSubscriptionScreen> {
                 text: "Service charge",
                 children: const [
                   TextSpan(
-                    text: " : 2.33 SAR",
+                    text: " : ₹ 100",
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -189,7 +189,7 @@ class _NewOrderScreenStateState extends State<NewSubscriptionScreen> {
                                 text: "Vehicle Quantity",
                                 children: [
                                   TextSpan(
-                                    text: " : $quantity ${"sq m"}",
+                                    text: " : $quantity ${"Litres"}",
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -286,7 +286,7 @@ class _NewOrderScreenStateState extends State<NewSubscriptionScreen> {
                                 totalChargeNotifier.value = payment.toInt();
 
                                 return Text(
-                                  quantity != 0 ? " $payment SAR" : "0.0",
+                                  quantity != 0 ? "₹ $payment" : "0.0",
                                   // "${((((quantity ?? 0) * 5) + ((type ?? false) ? 5 : 0)) * ((plan == Plan.daily || plan == Plan.alternate ? alternateDates.length : daycount))) + 2.33}",
                                   style: const TextStyle(
                                     fontSize: 18,
