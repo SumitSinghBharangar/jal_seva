@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
-
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
