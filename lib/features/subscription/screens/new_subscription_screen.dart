@@ -495,137 +495,144 @@ class _NewOrderScreenStateState extends State<NewSubscriptionScreen> {
                     return Row(
                       children: [
                         Expanded(
-                          child: ScaleButton(
-                            scale: .98,
-                            onTap: () async {
-                              planNotifier.value = Plan.daily;
-                              await _selectDateRange(context);
-                            },
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 400),
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: value == Plan.daily
-                                    ? AppColors.buttonColor.withOpacity(.2)
-                                    : null,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  width: value == Plan.daily ? 2 : .5,
-                                  strokeAlign: BorderSide.strokeAlignOutside,
+                          child: SizedBox(
+                            height: (60.h.isNaN || 60.h.isInfinite) ? 60 : 60.h,
+                            child: ScaleButton(
+                              onTap: () async {
+                                planNotifier.value = Plan.daily;
+                                await _selectDateRange(context);
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 400),
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
                                   color: value == Plan.daily
-                                      ? AppColors.buttonColor
-                                      : Colors.grey,
-                                ),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Daily",
-                                    style: TextStyle(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                      ? AppColors.buttonColor.withOpacity(.2)
+                                      : null,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    width: value == Plan.daily ? 2 : .5,
+                                    strokeAlign: BorderSide.strokeAlignOutside,
+                                    color: value == Plan.daily
+                                        ? AppColors.buttonColor
+                                        : Colors.grey,
                                   ),
-                                ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Daily",
+                                      style: TextStyle(
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
                         const SizedBox(width: 22),
                         Expanded(
-                          child: ScaleButton(
-                            scale: .98,
-                            onTap: () async {
-                              planNotifier.value = Plan.alternate;
-                              _selectAlternateDates(context);
-
-                              // show datePiker
-                            },
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 400),
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: value == Plan.alternate
-                                    ? AppColors.buttonColor.withOpacity(.2)
-                                    : null,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  width: value == Plan.alternate ? 2 : .5,
-                                  strokeAlign: BorderSide.strokeAlignOutside,
+                          child: SizedBox(
+                            height: (60.h.isNaN || 60.h.isInfinite) ? 60 : 60.h,
+                            child: ScaleButton(
+                              onTap: () async {
+                                planNotifier.value = Plan.alternate;
+                                _selectAlternateDates(context);
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 400),
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
                                   color: value == Plan.alternate
-                                      ? AppColors.buttonColor
-                                      : Colors.grey,
-                                ),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Alternate",
-                                    style: TextStyle(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                      ? AppColors.buttonColor.withOpacity(.2)
+                                      : null,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    width: value == Plan.alternate ? 2 : .5,
+                                    strokeAlign: BorderSide.strokeAlignOutside,
+                                    color: value == Plan.alternate
+                                        ? AppColors.buttonColor
+                                        : Colors.grey,
                                   ),
-                                ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Alternate",
+                                      style: TextStyle(
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
                         const SizedBox(width: 22),
                         Expanded(
-                          child: ScaleButton(
-                            scale: .98,
-                            onTap: () async {
-                              planNotifier.value = Plan.weekly;
-                              var r = await showCupertinoModalPopup(
-                                barrierDismissible: true,
-                                context: context,
-                                builder: (context) =>
-                                    WeeklyDetails(cPlan: plan),
-                              );
-                              quantityNotifier.value = 0;
-                              daycount = 0;
+                          child: SizedBox(
+                            height: (60.h.isNaN || 60.h.isInfinite) ? 60 : 60.h,
+                            child: ScaleButton(
+                              onTap: () async {
+                                planNotifier.value = Plan.weekly;
 
-                              for (var i in (r as Map<String, int>).values) {
-                                i > 0 ? daycount++ : daycount += 0;
-                                quantityNotifier.value =
-                                    (quantityNotifier.value ?? 0) + i;
-                              }
+                                var r = await showCupertinoModalPopup(
+                                  barrierDismissible: true,
+                                  context: context,
+                                  builder: (context) =>
+                                      WeeklyDetails(cPlan: plan),
+                                );
 
-                              plan = r;
+                                if (r == null) return; // ✅ fix
 
-                              // quantityNotifier.value =
-                              //     (r as Map<String, int>).values.map(toElement);
-                            },
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 400),
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: value == Plan.weekly
-                                    ? AppColors.buttonColor.withOpacity(.2)
-                                    : null,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  width: value == Plan.weekly ? 2 : .5,
-                                  strokeAlign: BorderSide.strokeAlignOutside,
+                                quantityNotifier.value = 0;
+                                daycount = 0;
+
+                                if (r is! Map<String, int>) return; // ✅ safety
+
+                                for (var i in r.values) {
+                                  i > 0 ? daycount++ : daycount += 0;
+                                  quantityNotifier.value =
+                                      (quantityNotifier.value ?? 0) + i;
+                                }
+
+                                plan = r;
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 400),
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
                                   color: value == Plan.weekly
-                                      ? AppColors.buttonColor
-                                      : Colors.grey,
-                                ),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Weekly",
-                                    style: TextStyle(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                      ? AppColors.buttonColor.withOpacity(.2)
+                                      : null,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    width: value == Plan.weekly ? 2 : .5,
+                                    strokeAlign: BorderSide.strokeAlignOutside,
+                                    color: value == Plan.weekly
+                                        ? AppColors.buttonColor
+                                        : Colors.grey,
                                   ),
-                                ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Weekly",
+                                      style: TextStyle(
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -662,11 +669,14 @@ class _NewOrderScreenStateState extends State<NewSubscriptionScreen> {
                                   //   textAlign: TextAlign.center,
                                   // ),
                                 ),
-                                value:
-                                    (value)!.toInt() /
-                                    (10 * alternateDates.length),
+                                value: alternateDates.isEmpty
+                                    ? 0
+                                    : (value ?? 0) /
+                                          (10 * alternateDates.length),
                                 onChanged: (dynamic aa) {
                                   setState(() {
+                                    if (alternateDates.isEmpty) return;
+
                                     quantityNotifier.value =
                                         num.parse("$aa").toInt() *
                                         10 *
