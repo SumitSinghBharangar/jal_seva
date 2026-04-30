@@ -281,7 +281,7 @@ class _NewOrderScreenStateState extends State<NewSubscriptionScreen> {
                                                 plan == Plan.alternate
                                             ? alternateDates.length
                                             : daycount))) +
-                                    2.33;
+                                    100;
                                 totalChargeNotifier.value = payment.toInt();
 
                                 return Text(
@@ -656,8 +656,8 @@ class _NewOrderScreenStateState extends State<NewSubscriptionScreen> {
                             child: SfSliderTheme(
                               data: const SfSliderThemeData(thumbRadius: 10),
                               child: SfSlider(
-                                max: 50.0,
-                                stepSize: 1,
+                                max: 500.0,
+
                                 thumbIcon: Container(
                                   alignment: Alignment.center,
                                   // child: Text(
@@ -672,14 +672,14 @@ class _NewOrderScreenStateState extends State<NewSubscriptionScreen> {
                                 value: alternateDates.isEmpty
                                     ? 0
                                     : (value ?? 0) /
-                                          (10 * alternateDates.length),
+                                          (5 * alternateDates.length),
                                 onChanged: (dynamic aa) {
                                   setState(() {
                                     if (alternateDates.isEmpty) return;
 
                                     quantityNotifier.value =
                                         num.parse("$aa").toInt() *
-                                        10 *
+                                        5 *
                                         alternateDates.length;
                                   });
                                 },
@@ -1119,7 +1119,7 @@ class _WeeklyDetailsState extends State<WeeklyDetails> {
                             AnimatedCrossFade(
                               firstChild: const SizedBox(height: 0),
                               secondChild: SizedBox(
-                                child: Text("${(plan[e] ?? 0)}  sq m."),
+                                child: Text("${(plan[e] ?? 0)} Litres"),
                               ),
                               crossFadeState: plan[e] == null
                                   ? CrossFadeState.showFirst
